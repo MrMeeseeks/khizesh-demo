@@ -2,7 +2,15 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="خیزش">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
 <title>خیزش — قیام شیر (دمو)</title>
 <style>
 html,body{margin:0;height:100%;background:#0b0b0e;overflow:hidden;font-family:Tahoma,"Segoe UI",sans-serif;color:#fff;user-select:none}
@@ -30,9 +38,35 @@ button.alt{background:#8a2020}
 .row button{font-size:.95em;padding:.25em .8em;margin:.15em}
 .warn{color:#ff6b6b;font-weight:bold}
 .ok{color:#5be37f}
+html,body{touch-action:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+#touch{position:fixed;inset:0;pointer-events:none;display:none;z-index:20;font-family:Tahoma,sans-serif}
+#touch.on{display:block}
+#joy{position:absolute;left:max(3vmin,env(safe-area-inset-left));bottom:4vmin;width:34vmin;height:34vmin;border-radius:50%;background:rgba(255,255,255,.08);border:.5vmin solid rgba(255,255,255,.25);pointer-events:auto;touch-action:none}
+#knob{position:absolute;left:50%;top:50%;width:14vmin;height:14vmin;margin:-7vmin 0 0 -7vmin;border-radius:50%;background:rgba(255,255,255,.35)}
+.tb{position:absolute;pointer-events:auto;touch-action:none;border-radius:50%;background:rgba(20,20,28,.55);border:.5vmin solid rgba(255,255,255,.35);color:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:3.2vmin;line-height:1.1;user-select:none;-webkit-user-select:none}
+.tb b{font-size:4.6vmin}
+.tb.down{background:rgba(255,216,74,.55)}
+#pw{position:absolute;top:1.5vmin;left:50%;transform:translateX(-50%);display:flex;gap:1vmin;pointer-events:auto}
+#pw .tb{position:static;width:7.5vmin;height:7.5vmin;font-size:3.4vmin;border-radius:1.5vmin}
+#rotate{position:fixed;inset:0;background:#0b0b0e;color:#fff;display:none;align-items:center;justify-content:center;flex-direction:column;z-index:50;font-size:5vw;text-align:center;font-family:Tahoma,sans-serif}
+@media (orientation:portrait){body.touch #rotate{display:flex}}
 </style>
 </head>
 <body>
+<div id="rotate"><div style="font-size:18vw">📱↻</div><div>برای بازی، گوشی رو افقی کن</div></div>
+<div id="touch">
+  <div id="joy"><div id="knob"></div></div>
+  <div class="tb" data-k="KeyZ" style="right:20vmin;bottom:4vmin;width:17vmin;height:17vmin"><b>✊</b>مشت</div>
+  <div class="tb" data-k="KeyX" style="right:2vmin;bottom:15vmin;width:17vmin;height:17vmin"><b>🦶</b>لگد</div>
+  <div class="tb" data-k="Space" style="right:2vmin;bottom:-1vmin;width:14vmin;height:14vmin;bottom:1vmin"><b>⤒</b>پرش</div>
+  <div class="tb" data-k="KeyE" style="right:38vmin;bottom:3vmin;width:11vmin;height:11vmin"><b>✋</b>E</div>
+  <div class="tb" data-k="KeyR" style="right:22vmin;bottom:23vmin;width:11vmin;height:11vmin"><b>🌹</b></div>
+  <div class="tb" data-k="KeyQ" style="right:6vmin;bottom:34vmin;width:11vmin;height:11vmin"><b>🦁</b></div>
+  <div id="pw">
+    <div class="tb" data-k="Digit1">۱</div><div class="tb" data-k="Digit2">۲</div><div class="tb" data-k="Digit3">۳</div><div class="tb" data-k="Digit4">۴</div>
+    <div class="tb" data-k="Digit5">۵</div><div class="tb" data-k="Digit6">۶</div><div class="tb" data-k="Digit7">۷</div><div class="tb" data-k="KeyP">⏸</div>
+  </div>
+</div>
 <div id="wrap">
 <canvas id="game"></canvas>
 <div id="adminBar" style="position:absolute;right:1%;bottom:2%;display:none;z-index:6;gap:.4em">
@@ -149,6 +183,43 @@ addEventListener('keydown',e=>{
 addEventListener('keyup',e=>{keys[e.code]=false});
 const down=(...c)=>c.some(k=>keys[k]);
 const hit=(...c)=>c.some(k=>pressed[k]);
+
+// ================= touch controls (mobile) =================
+const IS_TOUCH=('ontouchstart' in window)||navigator.maxTouchPoints>0;
+if(IS_TOUCH)document.body.classList.add('touch');
+(function(){
+  if(!IS_TOUCH)return;
+  const press=(k,on)=>{if(on){if(!keys[k])pressed[k]=true;keys[k]=true}else keys[k]=false};
+  document.querySelectorAll('#touch .tb').forEach(b=>{
+    const k=b.dataset.k;
+    b.addEventListener('pointerdown',e=>{e.preventDefault();audioInit();try{b.setPointerCapture(e.pointerId)}catch(_){}b.classList.add('down');press(k,true)});
+    const up=e=>{b.classList.remove('down');press(k,false)};
+    b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
+  });
+  const joy=document.getElementById('joy'),knob=document.getElementById('knob');let jid=null;
+  const setDir=(dx,dy)=>{const r=joy.clientWidth/2,t=r*.28;
+    press('ArrowLeft',dx<-t);press('ArrowRight',dx>t);press('ArrowUp',dy<-t);press('ArrowDown',dy>t);
+    const m=Math.hypot(dx,dy),c=Math.min(m,r*.7)/(m||1);knob.style.transform='translate('+dx*c+'px,'+dy*c+'px)'};
+  const move=e=>{if(e.pointerId!==jid)return;const rc=joy.getBoundingClientRect();setDir(e.clientX-rc.left-rc.width/2,e.clientY-rc.top-rc.height/2)};
+  joy.addEventListener('pointerdown',e=>{e.preventDefault();audioInit();jid=e.pointerId;try{joy.setPointerCapture(jid)}catch(_){}move(e)});
+  joy.addEventListener('pointermove',move);
+  const end=e=>{if(e.pointerId!==jid)return;jid=null;setDir(0,0);knob.style.transform=''};
+  joy.addEventListener('pointerup',end);joy.addEventListener('pointercancel',end);
+  document.addEventListener('pointerdown',()=>audioInit(),{passive:true});
+})();
+function updTouchUI(){
+  if(!IS_TOUCH)return;
+  const el=document.getElementById('touch'),on=(state==='play'||state==='chase')&&!CINE;
+  if(el.classList.contains('on')!==on)el.classList.toggle('on',on);
+  const chase=state==='chase';
+  for(const b of el.querySelectorAll('.tb')){const k=b.dataset.k;let vis=true;
+    if(k==='KeyR')vis=!chase&&can('rose');else if(k==='KeyQ')vis=can('crowd');else if(k==='KeyE')vis=!chase;else if(k==='Space')vis=!chase;
+    else if(k.startsWith('Digit')){const m={Digit1:'drone',Digit2:'trump',Digit3:'doc',Digit4:'farah',Digit5:'rezaP',Digit6:'cyrus',Digit7:'rezaKhan'};vis=can(m[k])}
+    const d=vis?'':'none';if(b.style.display!==d)b.style.display=d}
+  const kz=el.querySelector('[data-k="KeyZ"]'),kx=el.querySelector('[data-k="KeyX"]');
+  if(chase){kz.innerHTML='<b>⬅🔫</b>عقب';kx.innerHTML='<b>🔫➡</b>جلو'}else if(kz.dataset.m!=='f'){kz.innerHTML='<b>✊</b>مشت';kx.innerHTML='<b>🦶</b>لگد'}
+  kz.dataset.m=chase?'c':'f';
+}
 
 // ================= audio =================
 let ac=null;
@@ -1115,10 +1186,12 @@ function updTutorial(dt){
 document.getElementById('adminToggle').onclick=e=>{e.currentTarget.blur();setDev(!DEV)};
 document.getElementById('adminSkip').onclick=e=>{e.currentTarget.blur();adminSkip()};
 setDev(DEV);
+if(IS_TOUCH){const ab=document.getElementById('adminBar');ab.style.bottom='auto';ab.style.top='12%';const ts=document.getElementById('tutSkip');ts.style.bottom='auto';ts.style.top='12%'}
 document.getElementById('tutSkip').onclick=e=>{e.currentTarget.blur();if(TUT)endTutorial()};
 function endTutorial(){TUT=null;rage=0;P.weapon=null;fade(()=>startPrologue())}
 function drawTutorial(){
   if(!TUT)return;
+  if(IS_TOUCH)txt('روی گوشی: جوی‌استیک = حرکت · ✊ = Z · 🦶 = X · ⤒ = پرش',W/2,96,5,'#9cf','center');
   const s=TUT_STEPS[TUT.i],ok=TUT.done>0;
   R(20,54,W-40,30,'rgba(0,0,0,.78)');R(20,54,W-40,1,ok?'#3c3':'#ffd84a');R(20,83,W-40,1,ok?'#3c3':'#ffd84a');
   txt('آموزش '+fa(TUT.i+1)+' از '+fa(TUT_STEPS.length),W-26,60,5,'#ffd84a','right',null);
@@ -1265,6 +1338,7 @@ function loop(now){
   }
   draw();
   {const b=document.getElementById('tutSkip'),v=TUT&&state==='play'?'block':'none';if(b.style.display!==v)b.style.display=v}
+  updTouchUI();
   {const a=document.getElementById('adminBar'),v=ADMIN_ENABLED&&(state==='play'||state==='chase')?'flex':'none';if(a.style.display!==v)a.style.display=v}
   if(ADMIN_ENABLED&&hit('Backquote'))setDev(!DEV);if(DEV&&hit('F9'))adminSkip();
   for(const k in pressed)delete pressed[k];
@@ -1763,6 +1837,7 @@ document.getElementById('demoAgain').onclick=()=>{showPanel('titlePanel');state=
 if(DEMO){const sb=document.querySelector('#titlePanel .sub');if(sb)sb.insertAdjacentHTML('afterend','<div style="color:#ff9a30;font-size:1.4em">دموی رایگان: پیش‌درآمد + فصل ۱</div>')}
 document.getElementById('againBtn').onclick=()=>{showPanel('titlePanel');state='title';seg=null};
 requestAnimationFrame(loop);
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>
