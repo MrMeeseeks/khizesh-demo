@@ -496,7 +496,7 @@ function initSeg(sd){
   waves=sd.waves.map(w=>Object.assign({},w,{started:false,done:false}));
   enemies=[];projs=[];items=[];helpers=helpers.filter(h=>h.type==='trump');fx=[];spawnQ=[];
   P.x=40;P.y=172;P.z=0;P.vz=0;P.state='idle';P.atk=null;cam=0;camLock=null;swampV=0;rats=[];
-  gateReady=false;
+  gateReady=false;DARK=null;
   if(objs.some(o=>o.type==='console')){do{code=[ri(0,3),ri(0,3),ri(0,3)]}while(code.every(c=>c===0))}
 }
 function spawnPerson(type,x,y,ally,flag){
@@ -507,6 +507,7 @@ function spawnPerson(type,x,y,ally,flag){
 const STORE_THEMES=['street','square','night','defense','rasht','bazaar','alley','village'];
 const SHOP_THEMES=['street','square','night','defense','rasht','bazaar'];
 function storeAlly(){
+  if(DARK)return;
   const pool=eraPool(LV);if(!pool.length)return;
   if(!SHOP_THEMES.includes(seg.theme)){const type=seg.theme==='village'?pick(['villager','villagerW','villager']):seg.theme==='alley'?pick(['green','green','student']):pick(pool);const sd=Math.random()<.5?-1:1;const e=spawnPerson(type,sd<0?cam-16:cam+W+16,rnd(150,200),25,Math.random()<.3);bubble(e,eraLine(type,LV),2.2);return}
   const cand=[];for(let i=Math.floor(cam/64);i<=Math.floor((cam+W-64)/64);i++){if(seg.theme==='square'&&i%2===0)continue;if(i*64+32>cam+20&&i*64+32<cam+W-20)cand.push(i)}
@@ -579,7 +580,7 @@ function successor(){
   for(let i=0;i<20;i++)fx.push({x:P.x+rnd(-10,10),y:P.y-20,vx:rnd(-15,15),vy:rnd(-60,-20),t:0,life:rnd(.6,1.2),col:pick(['#ffb030','#ffe8a0','#ff7a1a']),s:2});
 }
 // ================= prologue: Ezzat at the dorm =================
-let PRO=null,CINE=null;
+let PRO=null,CINE=null,DARK=null;
 // ADMIN (temporary, for testing the story): one-hit kills, no damage, skip level. Set ADMIN_ENABLED=false before release.
 const ADMIN_ENABLED=false;const DEMO=true;let DEV=false;
 try{DEV=ADMIN_ENABLED&&localStorage.getItem('khizesh_dev')==='1'}catch(e){}
@@ -643,6 +644,7 @@ function hurtPlayer(d,dir,knock,pierce){
   if(P.inv>0||P.state==='down')return;
   if(DEV&&!(PRO&&pierce))return;
   if(!pierce&&P.weapon==='shield'&&P.face===-dir){d*=.35;useDur();sfx('block')}
+  if(DARK)d*=1.5;
   if(PRO&&PRO.doom&&!pierce){d=Math.min(d,Math.max(0,P.hp-30))}
   if(pierce){addFloat(P.x,P.y-50,'!','#f33',9);sfx('ko')}
   if(TORCH_ON())P.torch=Math.max(PRO?20:0,P.torch-3);
@@ -668,13 +670,13 @@ const ATK={
 };
 function startAtk(name,knockOverride){P.atk=Object.assign({t:0,done:false,name},ATK[name]);if(knockOverride)P.atk.knock=true;sfx('swing')}
 function doPlayerHit(a){
-  let n=0;const mul=dmgMulT>0?2:1;
+  let n=0;const mul=(dmgMulT>0?2:1)*(DARK?.5:1);
   for(const e of enemies){
     if(e.state==='down'||e.flee||e.ally>0)continue;
     const dx=(e.x-P.x)*P.face,dy=Math.abs(e.y-P.y),big=e.boss?7:0;
     if(dx>-6&&dx<a.range+big&&dy<11+big/2&&Math.abs(e.z-P.z)<26){hurtEnemy(e,DEV?99999:a.dmg*mul,P.face,a.knock,a.src);n++}
   }
-  if(n){sfx('hit');rage=Math.min(100,rage+2*n);if(TORCH_ON())P.torch=Math.min(100,P.torch+2.5*n);if(P.weapon&&a.name!=='jumpkick'&&a.name!=='kick')useDur()}
+  if(n){sfx('hit');rage=Math.min(100,rage+2*n);if(TORCH_ON()&&!DARK)P.torch=Math.min(100,P.torch+2.5*n);if(P.weapon&&a.name!=='jumpkick'&&a.name!=='kick')useDur()}
   return n;
 }
 function updPlayer(dt){
@@ -708,6 +710,7 @@ function updPlayer(dt){
 const ROSE_THANKS=['گل؟! ... من دیگه با مردمم!','ممنون! من با شمام!','مامانم همیشه گل دوست داشت...','باشه، دیگه نمی‌زنم!','زن، زندگی، آزادی!'];
 const ROSE_REFUSE={ejei:'گل؟! پرونده‌ی گل‌فروشی برات باز می‌کنم!',reza:'هه هه! گل خوشمزه‌ست؟ (خوردش)',rouhani:'گل نمی‌خوام، کلید می‌خوام!',ahmadi:'این گل ۱۰۰٪ کار اسرائیله!',rafsan:'گل؟ من پسته می‌کارم!',khamenei:'گل؟! مارهام گل نمی‌خورن!'};
 function giveRose(){
+  if(DARK){say('تو تاریکی کسی گلت رو نمی‌بینه... اول شعله رو روشن کن',1.8);sfx('bad');return}
   if(!can('rose')){if(PRO)say('امشب گلی در کار نیست...',1.8);else locked();return}
   if(P.roses<=0){say('گل رز نداری! از بسیجی‌ها گل می‌افته 🌹',1.8);sfx('bad');return}
   let best=null,bd=1e9;
@@ -790,6 +793,7 @@ function hurtEnemy(e,dmg,dir,knock,src){
 }
 function dropCoin(x,y){items.push({kind:'coin',x,y,z:8,vz:rnd(60,110),vx:rnd(-30,30)})}
 function enemyDies(e){
+  if(DARK)DARK.kills++;
   for(let i=0;i<e.coins;i++)dropCoin(e.x+rnd(-6,6),e.y+rnd(-3,3));
   if(e.drop&&Math.random()<e.dropP)items.push({kind:e.drop,x:e.x,y:e.y,z:6,vz:90});
   if(Math.random()<.18)items.push({kind:'apple',x:e.x,y:e.y,z:6,vz:100});
@@ -866,7 +870,7 @@ function updEnemies(dt){
       if(isAgg&&e.cd<=0&&(tgt!==P||P.state!=='down')){e.state='attack';e.st=0;e.hitDone=false;if(e.boss&&Math.random()<.3)bubble(e,pick(e.boss.lines),1.3)}
       else e.state='idle';
     }else{
-      const sp=e.spd*dt*(e.boss?1:1);
+      const sp=e.spd*dt*(DARK?1.25:1);
       e.x+=Math.sign(dx)*Math.min(Math.abs(dx),sp);e.y+=Math.sign(dy)*Math.min(Math.abs(dy),sp*.65);e.state='walk';
     }
     e.y=clamp(e.y,138,206);
@@ -958,6 +962,7 @@ const UNL_WHY={
 function can(k){if(TUT)return true;if(PRO)return false;return LV>=UNL[k]}
 function locked(k){say('این قدرت هنوز آزاد نشده. بعداً تو داستان بهش می‌رسی.',1.8);sfx('bad')}
 function usePowers(){
+  if(DARK){if(hit('KeyQ','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7'))say('بدون شعله کسی صدات رو نمی‌شنوه...',1.8);return}
   if(PRO){if(hit('KeyQ','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7'))say(PRO.doom?'امشب هیچ کمکی نمی‌رسه...':'هنوز هیچ کمکی نیست. فقط دانشجوها و یه مشعل.',2);return}
   const chase=state==='chase';
   if(hit('KeyQ')){if(can('crowd'))callCrowd();else locked()}
@@ -1274,10 +1279,17 @@ function update(dt){
   if(TORCH_ON()&&!CINE){
     const near=enemies.some(e=>!(e.ally>0)&&!e.leave&&e.state!=='down'&&Math.abs(e.x-P.x)<45&&Math.abs(e.y-P.y)<20);
     const friends=enemies.filter(e=>e.ally>0&&!e.leave&&Math.abs(e.x-P.x)<70&&Math.abs(e.y-P.y)<40).length;
-    P.torch=Math.min(100,P.torch+((near?0:2)+friends*3)*dt);
-    if(DEV)P.torch=100;
-    if(P.torch<=0&&state==='play'){torchOut();return}
-    if(P.torch<25&&msgT<0)say('شعله‌ات داره خاموش می‌شه! بجنگ، گل بده، یا برو کنار مردم: اتحاد، شعله رو برمی‌گردونه 🔥',1.8);
+    if(!DARK&&P.torch<=0&&state==='play'){DARK={t:0,near:0,kills:0};P.torch=0;sfx('ko');shakeT=.4;say('مشعلت خاموش شد! ۱۵ ثانیه وقت داری: کنار مردم وایستا یا ۳ نفر رو بزن',4);for(const e of enemies)if(e.rose&&e.ally>0)e.ally=.01}
+    if(!DARK)P.torch=Math.min(100,P.torch+((near?0:2)+friends*3)*dt);
+    if(DARK){P.torch=0;DARK.t+=dt;
+      if(friends>0)DARK.near+=dt;
+      if(DARK.near>=2||DARK.kills>=3){DARK=null;P.torch=40;sfx('power');shakeT=.2;say('🔥 شعله دوباره روشن شد! '+(friends>0?'مردم کنارت بودن.':'ترس رو شکستی.'),3);
+        for(let i=0;i<24;i++)fx.push({x:P.x+rnd(-10,10),y:P.y-24,vx:rnd(-30,30),vy:rnd(-80,-20),t:0,life:rnd(.5,1),col:pick(['#ffb030','#ffe08a','#ff7a1a']),s:2})}
+      else if(DARK.t>15){DARK=null;torchOut();return}}
+    else if(P.torch<=0&&state==='play'){DARK={t:0,near:0,kills:0};P.torch=0;sfx('ko');shakeT=.4;
+      say('مشعلت خاموش شد! ۱۵ ثانیه وقت داری: کنار مردم وایستا یا ۳ نفر رو بزن',4);
+      for(const e of enemies)if(e.rose&&e.ally>0)e.ally=.01}
+    if(!DARK&&P.torch<25&&P.torch>0&&msgT<0)say('شعله‌ات داره خاموش می‌شه! بجنگ، گل بده، یا برو کنار مردم: اتحاد، شعله رو برمی‌گردونه 🔥',1.8);
   }
   if(P.bubT>0)P.bubT-=dt;
   usePowers();updTutorial(dt);
@@ -1720,6 +1732,9 @@ function draw(){
     if(state==='chase'&&CH)drawChase();else if(seg)drawWorld();
     g.filter='none';
     g.restore();
+    if(DARK&&state==='play'){const px=P.x-cam,py=P.y-20,gr=g.createRadialGradient(px,py,10,px,py,170);gr.addColorStop(0,'rgba(0,0,10,.25)');gr.addColorStop(1,'rgba(0,0,10,'+(.7+.08*Math.sin(T*4))+')');g.fillStyle=gr;g.fillRect(0,0,W,H);
+      txt('🌑 '+fa(Math.max(0,Math.ceil(15-DARK.t))),W/2,72,13,DARK.t>10?'#ff5a5a':'#ffcf80');
+      txt('کنار مردم وایستا ('+fa(Math.min(2,DARK.near).toFixed(1))+'/۲) یا بجنگ ('+fa(DARK.kills)+'/۳)',W/2,88,6.5,'#ddd')}
     if(CINE&&CINE.kind==='ezzat'){g.fillStyle='rgba(0,0,0,'+Math.min(.55,CINE.t/5)+')';g.fillRect(0,0,W,H);if(CINE.t>1.2)txt('عزت...',W/2,70,12,'#ddd','center',null)}
     if(state==='chase'&&CH&&CH.end>0){const t=CH.end;
       if(t<2.5){for(let i=0;i<300;i++)R(Math.floor(Math.random()*W),Math.floor(Math.random()*H),2,1,Math.random()<.5?'#000':'#888');txt('اینترنت قطع شد',W/2,H/2,12,'#fff')}
