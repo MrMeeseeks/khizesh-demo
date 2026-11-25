@@ -185,7 +185,7 @@ const down=(...c)=>c.some(k=>keys[k]);
 const hit=(...c)=>c.some(k=>pressed[k]);
 
 // ================= touch controls (mobile) =================
-const IS_TOUCH=('ontouchstart' in window)||navigator.maxTouchPoints>0;
+const IS_TOUCH=(window.matchMedia&&matchMedia('(pointer:coarse)').matches)||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 if(IS_TOUCH)document.body.classList.add('touch');
 (function(){
   if(!IS_TOUCH)return;
@@ -257,6 +257,18 @@ const LOOK={
  leila:{skin:'#e8b894',hair:'#4a2a12',longHair:true,top:'#f0f0f0',sleeve:'#f0f0f0',pants:'#4a4a6a',shoe:'#2a2a2a'},
  kian:{skin:'#c89670',hair:'#1a1a1a',beard:'#2a2a2a',top:'#3a5a3a',sleeve:'#3a5a3a',pants:'#3a3a3a',shoe:'#2a1a0a',cap:'#8a2a2a'},
  parvin:{skin:'#d8a880',hair:'#1a0f08',scarf:'#8a3a8a',top:'#3a6a3a',sleeve:'#3a6a3a',dress:'#c84a3a',pants:'#c84a3a',shoe:'#2a1a0a'},
+ mahin:{skin:'#ecc0a0',hair:'#2a1a12',bigHair:true,top:'#8a3a3a',sleeve:'#8a3a3a',pants:'#3a2a2a',shoe:'#1a1a1a'},
+ marcherW:{skin:'#e8b894',hair:'#3a2418',bigHair:true,top:'#c8b48a',sleeve:'#c8b48a',dress:'#5a4a3a',pants:'#5a4a3a',shoe:'#2a1a0a'},
+ marcherW2:{skin:'#ecc0a0',hair:'#1a0f08',longHair:true,top:'#3a4a6a',sleeve:'#3a4a6a',dress:'#2a2a3a',pants:'#2a2a3a',shoe:'#1a1a1a'},
+ man79:{skin:'#d8a882',hair:'#2a1a12',stache:'#2a1a12',top:'#6a5a3a',sleeve:'#6a5a3a',pants:'#3a3a4a',shoe:'#1a1a1a'},
+ motherK:{skin:'#d8a882',hair:'#5a5a5a',scarf:'#1a1a1a',top:'#1a1a1a',sleeve:'#1a1a1a',dress:'#1a1a1a',pants:'#1a1a1a',shoe:'#111111'},
+ hossein:{skin:'#c89670',hair:'#2a2a2a',stache:'#2a2a2a',top:'#5a5a6a',sleeve:'#5a5a6a',pants:'#4a3a2a',shoe:'#2a1a0a'},
+ narges:{skin:'#ecc0a0',hair:'#2a1a12',scarf:'#c84a3a',top:'#2a3a5a',sleeve:'#2a3a5a',pants:'#2a2a3a',shoe:'#eeeeee'},
+ javad:{skin:'#c08a60',hair:'#1a1a1a',beard:'#2a2a2a',top:'#3a5a9a',sleeve:'#3a5a9a',pants:'#3a5a9a',shoe:'#2a1a0a',cap:'#e8b020'},
+ sepehr:{skin:'#e0b08a',hair:'#1a1a1a',glasses:true,top:'#2a2a2a',sleeve:'#2a2a2a',pants:'#3a4a6a',shoe:'#dddddd'},
+ susan:{skin:'#c89670',hair:'#1a0f08',scarf:'#3a2a6a',top:'#5a2a2a',sleeve:'#5a2a2a',dress:'#2a1a2a',pants:'#2a1a2a',shoe:'#2a1a0a'},
+ hiva:{skin:'#ecc0a0',hair:'#1a0f08',longHair:true,top:'#c83a8a',sleeve:'#c83a8a',dress:'#7a2a6a',pants:'#7a2a6a',shoe:'#1a1a1a'},
+ bahar:{skin:'#e8bc98',hair:'#2a1a12',longHair:true,top:'#2a2a30',sleeve:'#2a2a30',pants:'#2a3a5a',shoe:'#eeeeee'},
  plain:{skin:'#c99670',hair:'#111111',beard:'#111111',top:'#151515',sleeve:'#151515',pants:'#2a2a2a',shoe:'#111111'},
  ezzat:{skin:'#d8a882',hair:'#1a1a1a',beard:'#2a2a2a',stache:'#1a1a1a',top:'#ecece4',sleeve:'#ecece4',pants:'#4a4a42',shoe:'#2a2a2a'},
  shirin:{skin:'#ecc0a0',hair:'#1a0f08',longHair:true,top:'#2a2a30',sleeve:'#2a2a30',pants:'#3a5a8c',shoe:'#eeeeee'},
@@ -376,6 +388,8 @@ const ETYPE={
  shield:{look:'riot',hp:46,spd:33,dmg:8,range:16,wind:.42,wpn:'shield',drop:'shield',dropP:.55,coins:3},
  sepah:{look:'sepah',hp:62,spd:46,dmg:11,range:16,wind:.32,wpn:'baton',drop:'baton',dropP:.3,coins:4},
  gunman:{look:'plain',hp:999,spd:40,dmg:0,range:999,wind:1,wpn:'gun',coins:0},
+ thug:{look:'plain',hp:28,spd:44,dmg:7,range:16,wind:.38,wpn:'baton',drop:'baton',dropP:.3,coins:2},
+ dozer:{look:'basij',hp:110,spd:22,dmg:12,range:26,wind:.6,coins:6},
  ext:{look:'basij',hp:28,spd:48,dmg:2,range:30,wind:.5,wpn:'ext',drop:null,dropP:0,coins:3},
  saw:{look:'basij',hp:34,spd:40,dmg:9,range:16,wind:.4,wpn:'saw',coins:3},
  bike:{look:'basij',hp:20,spd:150,dmg:12,range:16,wind:.3,coins:3},
@@ -425,6 +439,13 @@ const LEVELS=[
    {at:1450,list:['saw','saw','sepah','sepah','saw'],final:true}],objs:WALNUTS}]},
  {city:6,name:'مرحله ۷ — تهران، بازار و بیت',desc:'بازار بزرگ تهران اعتصابه و کرکره‌ها پایینه. از وسط بازار رد شو تا برسی به بیت. رفسنجانی وسط بازار پسته پرت می‌کنه. آخر خط، خونه‌ی ضحاکه: مواظب مارهاش باش.',
   segs:[{theme:'bazaar',len:1500,waves:[{at:250,list:['sepah','basij','basij']},{at:650,list:['shield','shield','sepah','basij']},{at:1100,list:['boss:rafsanjani','basij','bike'],final:true}],objs:[]},
+   {theme:'blackout',len:1500,goal:'carry',need:3,carryLabel:'پیام',srcLabel:'پیام‌ها رو از اینجا بردار (E)',dropLabel:'پیام رو برسون (E)',
+    waves:[{at:300,list:['sepah','ext']},{at:800,list:['sepah','basij','ext']}],
+    objs:[{type:'source',x:120,y:150,kind:'msg'},{type:'drop',x:520},{type:'drop',x:930},{type:'drop',x:1300},{type:'shoes',x:1420},{type:'namewall',x:1460}],
+    intro:'اینترنت قطعه. خبرها رو باید پای پیاده برسونیم...',
+    card:{name:'۱۸ و ۱۹ دی ۱۴۰۴',date:'۸ و ۹ ژانویه‌ی ۲۰۲۶ · تهران و شهرهای ایران',
+      text:'تو خاموشی کامل اینترنت، نیروهای حکومتی به معترض‌ها شلیک کردن. خود حکومت کشته شدن ۳٬۱۱۷ نفر رو پذیرفت. گروه حقوق بشری هرانا تا ۷٬۰۰۷ نفر رو ثبت کرد. تو خیابون‌های ساکت فقط کفش‌ها موندن.',
+      legacy:'خبرها پای پیاده رسید. مشعل خاموش نشد.',src:'منابع: هرانا، گزارش‌های رسمی',btn:'ادامه ←'}},
    {theme:'palace',len:1600,waves:[{at:250,list:['sepah','sepah','shield','bike','basij']},{at:700,list:['sepah','shield','sepah','shield']},{at:1350,list:['boss:khamenei','ext'],final:true}],objs:[]}]},
 ];
 // history of the movements — each level is an era; its people come out of the stores to help
@@ -501,6 +522,7 @@ function bubble(e,text,t){e.bub=text;e.bubT=t||2.2}
 // ================= levels =================
 function startLevel(i){
   if(DEMO&&i>0){state='demoEnd';showPanel('demoPanel');return}
+  if(nextInterlude(i))return;
   LV=i;segI=0;abil={drone:1,trump:1,doc:1};defending=-1;
   showPanel('storyPanel');
   const er=ERAS[i];
@@ -514,15 +536,15 @@ function startLevel(i){
 }
 let storyPage=0,UNLOCK='',NEWP=[];
 function renderStory(){
-  const i=LV,st=PRO?PRO_STORY:STORY[i],nm=PRO?PRO_STORY.name:LEVELS[i].name,ds=PRO?PRO_STORY.desc:LEVELS[i].desc;
+  const i=LV,st=ILD?ILD.story:PRO?PRO_STORY:STORY[i],nm=ILD?ILD.name:PRO?PRO_STORY.name:LEVELS[i].name,ds=ILD?ILD.desc:PRO?PRO_STORY.desc:LEVELS[i].desc;
   const tt=document.getElementById('storyTitle'),tx=document.getElementById('storyText'),hb=document.getElementById('storyHist'),btn=document.getElementById('storyBtn');
   if(storyPage===0){tt.textContent=st.ch;hb.style.display='none';tx.textContent=st.story;btn.textContent='جرقه‌ی واقعی ← (Enter)'}
   else if(storyPage===1){tt.textContent=nm;hb.style.display='block';
     document.getElementById('histTitle').textContent='📜 جرقه‌ی واقعی: '+st.sparkT;document.getElementById('histText').textContent=st.spark;
-    document.getElementById('histUnlock').textContent=UNLOCK;tx.textContent=PRO?PRO_STORY.note:'مشعل‌دارها خیالی‌ان، ولی این اتفاق‌ها واقعی‌ان. قدرت در اتحاد کسانیه که مشعل رو روشن نگه می‌دارن.';btn.textContent='ادامه ← (Enter)'}
+    document.getElementById('histUnlock').textContent=UNLOCK;tx.textContent=ILD?'مشعل‌دار این بخش خیالیه، ولی این اتفاق‌ها واقعی‌ان.':PRO?PRO_STORY.note:'مشعل‌دارها خیالی‌ان، ولی این اتفاق‌ها واقعی‌ان. قدرت در اتحاد کسانیه که مشعل رو روشن نگه می‌دارن.';btn.textContent='ادامه ← (Enter)'}
   else{tt.textContent=nm;hb.style.display='none';tx.textContent=ds;btn.textContent='بزن بریم (Enter)'}
 }
-function storyNext(){if(storyPage<2){storyPage++;renderStory()}else if(PRO)beginPrologue();else beginLevel()}
+function storyNext(){if(storyPage<2){storyPage++;renderStory()}else if(ILD)beginInterlude();else if(PRO)beginPrologue();else beginLevel()}
 function beginLevel(){
   hidePanels();
   P.maxhp=100+hospital*15;P.hp=P.maxhp;P.hasKey=false;P.roses=Math.max(P.roses,3);P.torch=100;
@@ -563,11 +585,12 @@ function drawCut(){
 }
 function drawRain(){if(seg.theme!=='rasht'||TUT||defending>=0)return;g.fillStyle='rgba(190,210,235,.5)';for(let i=0;i<90;i++){const x=((i*53+T*60)%(W+40))-20,y=((i*97+T*260)%(H+20))-10;g.fillRect(Math.round(x),Math.round(y),1,4)}}
 function initSeg(sd){
-  seg=sd;objs=(sd.objs||[]).map(o=>Object.assign({},o));
+  seg=Object.assign({},sd);objs=(sd.objs||[]).map(o=>Object.assign({},o));
   waves=sd.waves.map(w=>Object.assign({},w,{started:false,done:false}));
   enemies=[];projs=[];items=[];helpers=helpers.filter(h=>h.type==='trump');fx=[];spawnQ=[];
   P.x=40;P.y=172;P.z=0;P.vz=0;P.state='idle';P.atk=null;cam=0;camLock=null;swampV=0;rats=[];
   gateReady=false;DARK=null;
+  if(sd.intro&&!ILD){P.bub=sd.intro;P.bubT=3.5}
   if(objs.some(o=>o.type==='console')){do{code=[ri(0,3),ri(0,3),ri(0,3)]}while(code.every(c=>c===0))}
 }
 function spawnPerson(type,x,y,ally,flag){
@@ -617,6 +640,169 @@ function mkEnemy(kind,x,y){
    face:-1,state:'walk',st:0,cd:rnd(.5,1.5),flash:0,coins:d.coins,drop:d.drop,dropP:d.dropP,t:Math.random()*5,freeze:0,ally:0};
 }
 
+// ================= interludes: real events between the chapters =================
+// each one: story pages (real spark), a short segment with its own mechanic, and a closing card.
+const INTERLUDES=[
+ {id:'w57',before:'pro',demo:true,hero:['mahin','مهین'],
+  name:'میان‌پرده — تهران، اسفند ۱۳۵۷',
+  story:{ch:'۱۳۵۷ — اولین مشعل',
+   story:'تهران، ۱۷ اسفند ۱۳۵۷. چند هفته از انقلاب گذشته. دیروز اعلام شد که زن‌ها باید با حجاب سر کار برن. مهین، معلم ریاضی، صبح روز جهانی زن، بدون روسری از خونه میاد بیرون. همکارهاش جلوی مدرسه منتظرشن. یکی یه مشعل کوچیک روشن می‌کنه: «ما انقلاب نکردیم که به عقب برگردیم.»',
+   sparkT:'۱۷ تا ۲۳ اسفند ۱۳۵۷ — راهپیمایی زنان',
+   spark:'۸ تا ۱۴ مارس ۱۹۷۹ (۱۷ تا ۲۳ اسفند ۱۳۵۷)، بعد از فرمان حجاب اجباری، هزاران زن بدون روسری در تهران راهپیمایی کردن. شعارشون این بود: «ما انقلاب نکردیم که به عقب برگردیم.» مردها با زنجیر انسانی از اون‌ها محافظت کردن و حدود ۱۵ هزار نفر جلوی کاخ دادگستری تحصن کردن. حجاب اجباری قدم‌به‌قدم اومد: از ادارات در ۱۳۵۹ تا قانون ۱۳۶۲ با مجازات شلاق.'},
+  desc:'تو زنجیر انسانی هستی: زن‌های راهپیما پشت سرت حرکت می‌کنن. جلوشون وایستا تا به کاخ دادگستری برسن. چماق‌دارها اونا رو هدف گرفتن. اگه زیادی زخمی بشن، راهپیمایی می‌پاشه.',
+  segs:[{theme:'t57',len:1800,goal:'escort',marchers:6,maxLost:4,
+   waves:[{at:260,list:['thug','thug']},{at:640,list:['thug','thug','thug']},{at:1020,list:['thug','basij','thug']},{at:1380,list:['thug','thug','basij','thug']}],objs:[]}],
+  card:{name:'زنان اسفند ۵۷',date:'۸ تا ۱۴ مارس ۱۹۷۹ · تهران',text:'این اولین اعتراض بزرگ به جمهوری اسلامی بود، فقط چند هفته بعد از انقلاب. همون مسیری که بعدها ویدا موحد و مهسا امینی ادامه‌اش دادن، اینجا شروع شد.',legacy:'مهین مشعل رو روشن نگه داشت. سال‌ها بعد، به یه مادر رسید.',src:'منبع: Wikipedia — 1979 International Women\'s Day protests',btn:'ادامه ←'}},
+ {id:'kh67',before:'pro',hero:['motherK','یه مادر'],
+  name:'میان‌پرده — خاوران، ۱۳۶۷',
+  story:{ch:'۱۳۶۷ — خاوران',
+   story:'تابستون ۱۳۶۷. ملاقات‌ها یهو قطع شد. چند ماه بعد، به یه مادر یه ساک دادن: چند تیکه لباس و یه ساعت مچی. نگفتن کجا دفنش کردن. مادرها خودشون پیدا کردن: یه زمین خالی تو خاوران، جنوب شرق تهران، با خاک تازه.',
+   sparkT:'مرداد ۱۳۶۷ به بعد — کشتار زندانیان سیاسی',
+   spark:'از اواخر تیر ۱۳۶۷، «هیئت‌های مرگ» در زندان‌های اوین و گوهردشت زندانیانی رو که قبلاً حکم گرفته بودن به اعدام فرستادن. خیلی‌ها در گورهای بی‌نشون در خاوران دفن شدن. عفو بین‌الملل و دیده‌بان حقوق بشر تعداد کشته‌ها رو ۲٬۸۰۰ تا ۵٬۰۰۰ نفر تخمین می‌زنن. از اون سال، «مادران خاوران» هر سال حوالی ۱۰ شهریور با وجود درهای قفل و آزار، اونجا جمع می‌شن.'},
+  desc:'هیچ جنگی تو این بخش نیست. فقط راه برو و روی خاک‌های بی‌نشون گل بذار (E).',
+  segs:[{theme:'khavaran',len:1100,goal:'remember',fx:'flower',waves:[],
+   objs:[{type:'gateK',x:70},{type:'spot',x:300,y:165},{type:'spot',x:450,y:190},{type:'spot',x:600,y:158},{type:'spot',x:760,y:185},{type:'spot',x:920,y:170}]}],
+  card:{name:'مادران خاوران',date:'۱۳۶۷ تا امروز',text:'هیچ اسمی روی این خاک نیست. ما هم اسمی نیاوردیم، چون این اسم‌ها مال خانواده‌هاشونه. مادرهای خاوران بیش از سی ساله که هر شهریور میان.',legacy:'مادر مشعل رو کنار گل‌ها گذاشت. یه کارگر مشهدی برش داشت.',src:'منابع: عفو بین‌الملل، دیده‌بان حقوق بشر، Front Line Defenders',btn:'ادامه ←'}},
+ {id:'kt71',before:'pro',hero:['hossein','حسین'],
+  name:'میان‌پرده — مشهد، کوی طلاب، ۱۳۷۱',
+  story:{ch:'۱۳۷۱ — خونه‌ای که خودم ساختم',
+   story:'مشهد، خرداد ۱۳۷۱. حسین، کارگر ساختمونی، با دست‌های خودش یه خونه‌ی کوچیک تو حاشیه‌ی شهر ساخته. صبح بولدوزرها میان که محله رو خراب کنن. همسایه‌ها جلوی بولدوزرها وایستادن.',
+   sparkT:'۱۰ خرداد ۱۳۷۱ — کوی طلاب مشهد',
+   spark:'اوایل دهه‌ی ۷۰، تخریب خونه‌های حاشیه‌نشین‌ها چند شورش شهری به راه انداخت. ۳۰ مه ۱۹۹۲ (حدود ۹ و ۱۰ خرداد ۱۳۷۱) در کوی طلاب مشهد، مردم جلوی تیم‌های تخریب ایستادن. دو پسر با گلوله کشته شدن و بعدها چهار نفر از معترض‌ها اعدام شدن. ۱۵ فروردین ۱۳۷۴ هم در اسلامشهر، اعتراض به گرونی بلیت اتوبوس و کم‌آبی با شلیک سپاه به خون کشیده شد.'},
+  desc:'نذار بولدوزرها خونه‌ها رو خراب کنن. بولدوزر رو بزن تا متوقف بشه.',
+  segs:[{theme:'shanty',len:1500,goal:'protect',
+   waves:[{at:200,list:['dozer','basij']},{at:600,list:['dozer','basij','basij']},{at:1000,list:['dozer','dozer','sepah'],final:true}],
+   objs:[{type:'house',x:300,y:140,hp:100},{type:'house',x:480,y:140,hp:100},{type:'house',x:700,y:140,hp:100},{type:'house',x:900,y:140,hp:100},{type:'house',x:1120,y:140,hp:100},{type:'house',x:1320,y:140,hp:100}]}],
+  card:{name:'کوی طلاب و اسلامشهر',date:'خرداد ۱۳۷۱ و فروردین ۱۳۷۴',text:'این شورش‌ها برای ایدئولوژی نبود، برای سقف و نون و آب بود. اعدام‌های بعدش هیچ‌وقت روی صفحه نمیاد، ولی فراموش نمی‌شه.',legacy:'حسین مشعل رو به پسرش داد، که بعدها رفت دانشگاه.',src:'منابع: Asef Bayat، عفو بین‌الملل',btn:'ادامه ←'}},
+ {id:'sig85',before:1,hero:['narges','نرگس'],
+  name:'میان‌پرده — تهران، ۱۳۸۵',
+  story:{ch:'۱۳۸۵ — یک میلیون امضا',
+   story:'تهران، تابستون ۱۳۸۵. نرگس تو تجمع میدون هفت تیر بود که ده‌ها نفر رو بازداشت کردن. حالا با یه دفترچه در خونه‌ها رو می‌زنه: «برای تغییر قوانین نابرابر امضا می‌کنید؟»',
+   sparkT:'۲۲ خرداد ۱۳۸۵ — تحصن هفت تیر و کمپین یک میلیون امضا',
+   spark:'۲۲ خرداد ۱۳۸۵، زن‌ها در میدان هفت تیر تهران برای برابری حقوقی تجمع کردن و حدود ۷۰ نفر بازداشت شدن. دو ماه بعد، کمپین «یک میلیون امضا» شروع شد: فعال‌ها در به در و رو در رو با مردم حرف می‌زدن. همون سال‌ها رانندگان اتوبوس تهران هم برای منصور اسانلو اعتصاب کردن.'},
+  desc:'در خونه‌ها رو بزن (E) و امضا جمع کن. لباس‌شخصی‌ها هم تو محله می‌گردن.',
+  segs:[{theme:'street',len:1500,goal:'doors',need:6,doorLabel:'امضا',
+   waves:[{at:500,list:['basij','basij']},{at:1000,list:['basij','ext','basij']}],
+   objs:[200,400,620,840,1060,1300].map((x,i)=>({type:'door2',x,line:['امضا می‌کنم. دخترم هم امضا می‌کنه.','برای حق ارث برابر؟ معلومه!','شوهرم نمی‌ذاره... ولی من امضا می‌کنم!','بیا تو چای بخور، بعد امضا.','مادرم هم می‌خواد امضا کنه.','قانون باید برابر باشه. امضا.'][i]}))}],
+  card:{name:'کمپین یک میلیون امضا',date:'از شهریور ۱۳۸۵',text:'این کمپین با گفت‌وگو کار می‌کرد، نه با فریاد. خیلی از فعال‌هاش بازداشت شدن، ولی زبان «برابری» رو به خونه‌های مردم برد.',legacy:'نرگس دفترچه و مشعل رو به یه مهندس تبریزی سپرد.',src:'منابع: OMCT، Wikipedia — One Million Signatures، دیده‌بان حقوق بشر',btn:'ادامه ←'}},
+ {id:'lab97',before:4,hero:['javad','جواد'],
+  name:'میان‌پرده — هفت‌تپه و بازار، ۱۳۹۷',
+  story:{ch:'۱۳۹۷ — سال کارگرها',
+   story:'۱۳۹۷. جواد، کارگر نیشکر هفت‌تپه، ماه‌هاست حقوق نگرفته. کامیون‌دارها اعتصاب کردن، بازار تهران بسته شد. حالا نوبت بازار شهر خودشونه: کرکره‌ها باید یکی‌یکی پایین بیاد.',
+   sparkT:'۱۳۹۷ — اعتصاب کامیون‌داران، بازار و هفت‌تپه',
+   spark:'از حدود ۱ خرداد ۱۳۹۷ کامیون‌دارها در سراسر ایران اعتصاب کردن. ۴ تیر ۱۳۹۷ بازار تهران بسته شد. کارگران نیشکر هفت‌تپه برای حقوق‌های عقب‌افتاده اعتصاب کردن. ۲۷ آبان ۱۳۹۷ اسماعیل بخشی و سپیده قلیان بازداشت شدن. بعدها از شکنجه گفتن و دوباره بازداشت شدن.'},
+  desc:'به مغازه‌ها سر بزن (E) تا کرکره‌ها پایین بیاد. سپاه می‌خواد بازار رو باز نگه داره.',
+  segs:[{theme:'bazaar',len:1500,goal:'doors',need:6,doorLabel:'کرکره',doorKind:'shutter',
+   waves:[{at:400,list:['sepah','basij']},{at:900,list:['sepah','ext','basij']}],
+   objs:[224,416,608,800,992,1184].map((x,i)=>({type:'door2',x,kind:'shutter',line:['تعطیل! اعتصاب!','ما هم می‌بندیم.','نون نداریم، مغازه چرا باز باشه؟','کامیون‌دارها بستن، ما هم می‌بندیم.','حقوق کارگرها رو بدید!','بازار با مردمه.'][i]}))}],
+  card:{name:'سال کارگرها',date:'خرداد تا آبان ۱۳۹۷',text:'تصویر کرکره‌هایی که یکی بعد از دیگری پایین میاد، هفت سال بعد، دی ۱۴۰۴، دوباره تکرار شد.',legacy:'جواد مشعل رو به یه راننده‌ی وانت داد.',src:'منابع: عفو بین‌الملل، دیده‌بان حقوق بشر',btn:'ادامه ←'}},
+ {id:'aban98m',before:5,hero:['motherK','یه مادر'],
+  name:'میان‌پرده — ماهشهر و کرج، آبان ۱۳۹۸',
+  story:{ch:'آبان ۱۳۹۸ — مادران آبان',
+   story:'سحر، چند روز بعد از آبان ۹۸. یه مادر با چند شمع کنار نیزارهای ماهشهر راه می‌ره. هیچ‌کس جواب نمی‌ده که بچه‌ها کجان.',
+   sparkT:'۲۵ تا ۲۷ آبان ۱۳۹۸ — کرج و ماهشهر',
+   spark:'پویا بختیاری، مهندس ۲۷ ساله، ۲۵ آبان ۱۳۹۸ در مهرشهر کرج با گلوله به سر کشته شد. قبل از مراسم چهلمش خانواده‌ش رو بازداشت کردن. مادرش، ناهید شیرپیشه، یکی از چهره‌های «مادران آبان» شد. حوالی ۲۷ آبان در ماهشهر، به گفته‌ی شاهدهایی که نیویورک‌تایمز نقل کرده، سپاه به معترض‌هایی که به نیزار فرار کرده بودن شلیک کرد و ۴۰ تا ۱۰۰ نفر کشته شدن. استاندار این رو انکار می‌کنه.'},
+  desc:'هیچ جنگی تو این بخش نیست. تو نیزار راه برو و شمع روشن کن (E).',
+  segs:[{theme:'marsh',len:1100,goal:'remember',fx:'candle',waves:[],
+   objs:[{type:'spot',x:280,y:170,cand:1},{type:'spot',x:430,y:192,cand:1},{type:'spot',x:600,y:162,cand:1},{type:'spot',x:760,y:186,cand:1},{type:'spot',x:930,y:172,cand:1}]}],
+  card:{name:'مادران آبان',date:'آبان ۱۳۹۸ تا امروز',text:'بیشتر کشته‌های آبان اسم و تصویری در رسانه‌ها نداشتن، چون اینترنت قطع بود. مادرهاشون اسم‌ها رو زنده نگه داشتن.',legacy:'شمع‌ها تا صبح روشن موند.',src:'منابع: RFE/RL، Radio Farda، The National',btn:'ادامه ←'}},
+ {id:'ps752',before:5,hero:['sepehr','سپهر'],
+  name:'میان‌پرده — دانشگاه امیرکبیر، دی ۱۳۹۸',
+  story:{ch:'دی ۱۳۹۸ — ۱۷۶ شمع',
+   story:'تهران، ۲۱ دی ۱۳۹۸. سه روز گفتن هواپیما خراب شده. امروز اعتراف کردن که سپاه زدش. سپهر، دانشجوی امیرکبیر، با بقیه جلوی دانشگاه شمع روشن می‌کنه. ۱۷۶ شمع.',
+   sparkT:'۱۸ تا ۲۱ دی ۱۳۹۸ — پرواز ۷۵۲',
+   spark:'۱۸ دی ۱۳۹۸ (۸ ژانویه‌ی ۲۰۲۰)، سپاه هواپیمای مسافربری PS752 رو بعد از پرواز از تهران با موشک زد و هر ۱۷۶ سرنشین کشته شدن. حکومت سه روز انکار کرد. بعد از اعتراف در ۲۱ دی، دانشجوها جلوی دانشگاه‌ها تجمع کردن.'},
+  desc:'۳۰ ثانیه شمع‌ها رو روشن نگه دار. با هر ثانیه شمع‌های بیشتری روشن می‌شن.',
+  segs:[{theme:'campus',len:900,
+   waves:[{at:300,list:['basij','ext'],final:true,hold:30,candles:176,pool:['basij','basij','shield','ext','basij'],holdMsg:'شمع‌ها رو روشن نگه دار. ۱۷۶ نفر.',endMsg:'۱۷۶ شمع روشن موند.'}],objs:[{type:'candles',x:520}]}],
+  card:{name:'پرواز ۷۵۲',date:'۱۸ دی ۱۳۹۸ · ۱۷۶ نفر',text:'خیلی از مسافرها دانشجو بودن و خیلی‌هاشون از کانادا. خانواده‌هاشون هنوز دنبال عدالتن. فقط اسم‌هایی رو باید آورد که خانواده‌ها خودشون عمومی کردن.',legacy:'سپهر مشعل رو به یه زن روستایی از لرستان داد.',src:'منبع: Wikipedia — Ukraine International Airlines Flight 752',btn:'ادامه ←'}},
+ {id:'khz1400',before:6,hero:['susan','سوسن'],
+  name:'میان‌پرده — خوزستان، تیر ۱۴۰۰',
+  story:{ch:'تیر ۱۴۰۰ — تشنه‌ام',
+   story:'خوزستان، تیر ۱۴۰۰. پنجاه درجه گرما و آب قطعه. سوسن از چاه آخر روستا آب برای همسایه‌ها می‌بره. شب‌ها مردم تو خیابون می‌خونن: «تشنه‌ام».',
+   sparkT:'۲۴ تیر ۱۴۰۰ — اعتراض‌های آب خوزستان',
+   spark:'از ۲۴ تیر ۱۴۰۰ مردم خوزستان در اعتراض به کم‌آبی به خیابون اومدن. نیروهای امنیتی با گلوله‌ی جنگی و ساچمه جواب دادن و دست‌کم ۸ تا ۱۱ نفر، از جمله یه پسر نوجوون، کشته شدن. چند ماه قبل، ۴ اسفند ۱۳۹۹، به سوخت‌برهای بلوچ در سراوان شلیک شد و دست‌کم ده نفر کشته شدن.'},
+  desc:'از چاه آب بردار (E) و به خونه‌ها برسون. گرما جونت رو کم می‌کنه.',
+  segs:[{theme:'khz',len:1450,goal:'carry',need:4,heat:true,carryLabel:'آب',srcLabel:'آب بردار (E)',dropLabel:'آب رو برسون (E)',
+   waves:[{at:500,list:['basij','sepah']},{at:1000,list:['sepah','basij','ext']}],
+   objs:[{type:'source',x:110,y:150,kind:'water'},{type:'drop',x:420,kind:'house'},{type:'drop',x:720,kind:'house'},{type:'drop',x:1020,kind:'house'},{type:'drop',x:1320,kind:'house'}]}],
+  card:{name:'تشنه‌ام',date:'تیر ۱۴۰۰ · خوزستان',text:'عرب‌های خوزستان و بلوچ‌های سراوان، مثل خیلی از مردم حاشیه، صداشون کمتر شنیده می‌شه. این بخش باید با مشورت خودشون کامل‌تر بشه.',legacy:'سوسن مشعل رو به یه دختر کرد از سقز داد.',src:'منابع: عفو بین‌الملل، دیده‌بان حقوق بشر، Rudaw',btn:'ادامه ←'}},
+ {id:'wlf1401',before:6,hero:['hiva','هیوا'],
+  name:'میان‌پرده — سقز، زاهدان، شریف، ۱۴۰۱',
+  story:{ch:'۱۴۰۱ — ژن، ژیان، ئازادی',
+   story:'شهریور ۱۴۰۱. هیوا، دانشجوی شریف، اهل سقزه. برای خاکسپاری مهسا (ژینا) امینی برگشته شهرش. زن‌ها کنار مزار روسری‌هاشون رو برمی‌دارن. چند هفته بعد، خبر زاهدان میاد. و بعد، شبِ پارکینگ شریف.',
+   sparkT:'۲۶ شهریور تا مهر ۱۴۰۱ — سقز، زاهدان، شریف',
+   spark:'۲۶ شهریور ۱۴۰۱ در خاکسپاری مهسا امینی در سقز، زن‌ها روسری‌هاشون رو برداشتن و شعار «ژن، ژیان، ئازادی» سر داده شد. ۸ مهر ۱۴۰۱ در زاهدان، بعد از نماز جمعه، به نمازگزارها و معترض‌ها شلیک شد و حدود ۶۶ تا بیش از ۱۰۰ نفر کشته شدن («جمعه‌ی خونین»). ۱۰ مهر، دانشجوهای دانشگاه شریف تو پارکینگ دانشگاه محاصره شدن. هیئت حقیقت‌یاب سازمان ملل سرکوب این اعتراض‌ها رو شامل جنایت علیه بشریت دونست.'},
+  desc:'سه بخش: کنار مزار در سقز، یادبود زاهدان (بدون جنگ)، و فرار از محاصره‌ی پارکینگ شریف.',
+  segs:[
+   {theme:'saqqez',len:900,goal:'remember',fx:'scarf',waves:[],objs:[{type:'spot',x:300,y:168,grave:1},{type:'spot',x:500,y:186,grave:1},{type:'spot',x:700,y:164,grave:1}]},
+   {theme:'zahedan',len:1000,goal:'remember',fx:'flower',waves:[],objs:[{type:'spot',x:260,y:170},{type:'spot',x:420,y:190},{type:'spot',x:580,y:164},{type:'spot',x:740,y:184},{type:'spot',x:880,y:170}],
+    card:{name:'جمعه‌ی خونین زاهدان',date:'۸ مهر ۱۴۰۱',text:'نمازگزارها و معترض‌های بلوچ بعد از نماز جمعه هدف گلوله قرار گرفتن. حدود ۶۶ تا بیش از ۱۰۰ نفر کشته شدن، از جمله کودکان. هیچ کشتنی روی صفحه نشون داده نمی‌شه.',legacy:'',src:'منبع: Wikipedia — Zahedan massacre، عفو بین‌الملل',btn:'ادامه ←'}},
+   {theme:'sharif',len:1300,waves:[{at:220,list:['basij','ext']},{at:600,list:['bike','basij','shield']},{at:1000,list:['sepah','basij','ext','shield'],final:true}],objs:[]}],
+  card:{name:'زن، زندگی، آزادی',date:'۱۴۰۱',text:'از سقز تا زاهدان تا تهران، یه جمله تو کل ایران تکرار شد. برای قربانی‌های کودک و اعدام‌ها، این بازی فقط فضای یادبود نشون می‌ده.',legacy:'هیوا مشعل رو به شیرین داد.',src:'منابع: سازمان ملل (هیئت حقیقت‌یاب)، Al Jazeera',btn:'ادامه ←'}},
+];
+let ILD=null;const ILD_DONE=new Set();
+function nextInterlude(before){
+  const it=INTERLUDES.find(x=>x.before===before&&!ILD_DONE.has(x.id)&&(!DEMO||x.demo));
+  if(!it)return false;
+  ILD=it;ILD.segI=0;PRO=null;LV=typeof before==='number'?before:0;segI=0;defending=-1;
+  showPanel('storyPanel');storyPage=0;UNLOCK='';renderStory();state='story';return true;
+}
+function beginInterlude(){
+  hidePanels();const h=ILD.hero;P.look=LOOK[h[0]];P.name=h[1];P.maxhp=100;P.hp=100;P.torch=100;P.weapon=null;P.carry=false;P.lives=Math.max(P.lives,3);
+  ILD.segI=ILD.segI||0;startIldSeg();state='play';
+}
+function startIldSeg(){
+  const sd=ILD.segs[ILD.segI];initSeg(sd);seg.lost=0;
+  if(sd.goal==='escort'){const L=['marcherW','marcherW2','marcherW','man79','marcherW2','marcherW'];
+    for(let k=0;k<sd.marchers;k++){const e=spawnPerson(L[k%L.length],30+k*14,150+(k%3)*16,9999,k===1);e.marcher=true;e.mi=k;e.spd=16;e.hp=e.maxhp=60}}
+  if(sd.intro){P.bub=sd.intro;P.bubT=3}
+}
+function ildFinish(){
+  const it=ILD;ILD_DONE.add(it.id);
+  showMemObj(Object.assign({},it.card,{next:()=>{ILD=null;if(it.before==='pro')startPrologue();else startLevel(it.before)}}));
+}
+function goalDone(msg){if(seg.goalDone)return;seg.goalDone=true;say(msg||'آفرین!',2.5);clearT=2.2;camLock=null}
+function updGoals(dt){
+  if(!seg||!seg.goal||seg.goalDone)return;
+  const g=seg.goal;
+  if(g==='escort'){
+    if((seg.lost||0)>=seg.maxLost){state='over';document.getElementById('overTitle').textContent='راهپیمایی پاشید';document.getElementById('overText').textContent='زن‌های زیادی زخمی شدن. ولی اسفند ۵۷ اون‌ها برگشتن، دوباره و دوباره.';showPanel('overPanel');return}
+    const ms=enemies.filter(e=>e.marcher&&!e.injured);
+    if(ms.length&&ms.every(e=>e.x>=seg.len-150))goalDone('به کاخ دادگستری رسیدیم. تحصن شروع شد!');
+  }else if(g==='remember'){const sp=objs.filter(o=>o.type==='spot');if(sp.length&&sp.every(o=>o.done))goalDone(seg.fx==='candle'?'شمع‌ها روشن موند.':'گل‌ها روی خاک موند.')}
+  else if(g==='doors'){if(objs.filter(o=>o.type==='door2'&&o.done).length>=seg.need)goalDone(seg.doorKind==='shutter'?'کل بازار بسته شد!':'امضاها جمع شد!')}
+  else if(g==='carry'){if(objs.filter(o=>o.type==='drop'&&o.done).length>=seg.need)goalDone(seg.carryLabel==='آب'?'آب به همه رسید.':'همه‌ی پیام‌ها رسید.');
+    if(seg.heat&&!P.carry&&P.state!=='down')P.hp=Math.max(12,P.hp-1.4*dt)}
+}
+function goalText(){
+  if(!seg||!seg.goal)return '';
+  const g=seg.goal;
+  if(g==='escort'){const ms=enemies.filter(e=>e.marcher);return '🚶‍♀️ راهپیماها: '+fa(ms.filter(e=>!e.injured).length)+' سالم · '+fa(seg.lost||0)+' زخمی'}
+  if(g==='remember'){const sp=objs.filter(o=>o.type==='spot');return (seg.fx==='candle'?'🕯 ':'🌷 ')+fa(sp.filter(o=>o.done).length)+' / '+fa(sp.length)}
+  if(g==='doors')return (seg.doorKind==='shutter'?'🏪 ':'✍ ')+seg.doorLabel+': '+fa(objs.filter(o=>o.type==='door2'&&o.done).length)+' / '+fa(seg.need);
+  if(g==='carry')return (seg.carryLabel==='آب'?'💧 ':'✉ ')+seg.carryLabel+': '+fa(objs.filter(o=>o.type==='drop'&&o.done).length)+' / '+fa(seg.need)+(P.carry?' (در دست)':'');
+  if(g==='protect')return '🏠 خونه‌های سالم: '+fa(objs.filter(o=>o.type==='house'&&o.hp>0).length);
+  return '';
+}
+function interactGoal(){
+  for(const o of objs){const dx=Math.abs(o.x-P.x);
+    if(o.type==='spot'&&!o.done&&dx<16&&Math.abs(o.y-P.y)<14){o.done=true;sfx('pick');
+      for(let i=0;i<(seg.fx==='scarf'?10:6);i++)fx.push({x:o.x+rnd(-6,6),y:o.y-10,vx:rnd(-20,20)+(seg.fx==='scarf'?30:0),vy:rnd(-60,-20),t:0,life:rnd(.8,1.6),col:seg.fx==='scarf'?pick(['#f0f0f0','#e8e0d0','#3a3a3a']):seg.fx==='candle'?pick(['#ffb030','#ffe08a']):pick(['#e8325a','#ffd84a','#f0f0f0']),s:seg.fx==='scarf'?3:2});
+      if(o.grave)say(pick(['ژن، ژیان، ئازادی','روسری‌ها به باد رفت','اسمت رمز ما شد']),2.5);return true}
+    if(o.type==='door2'&&!o.done&&dx<16&&P.y<160){o.done=true;o.sayT=2.6;sfx(o.kind==='shutter'?'block':'coin');return true}
+    if(o.type==='source'&&dx<16&&Math.abs((o.y||150)-P.y)<16){if(!P.carry){P.carry=true;sfx('pick');say(o.kind==='water'?'آب برداشتی. ببرش!':'پیام رو برداشتی. برسونش!',2)}return true}
+    if(o.type==='drop'&&!o.done&&dx<18&&P.y<162){if(P.carry){P.carry=false;o.done=true;sfx('open');if(seg.heat)P.hp=Math.min(P.maxhp,P.hp+12);o.sayT=2.4}else say(seg.carryLabel==='آب'?'اول از چاه آب بردار':'اول پیام رو بردار',1.6);return true}
+  }
+  return false;
+}
+function updMarcher(e,dt){
+  if(e.injured){e.st+=dt;if(e.z<=0&&e.st>1.4){e.marcher=false;e.ally=999;e.leave=-1}return}
+  const threat=enemies.some(o=>!(o.ally>0)&&!o.leave&&o.state!=='down'&&Math.abs(o.x-e.x)<70&&Math.abs(o.y-e.y)<40);
+  const tx=Math.min(seg.len-90+(e.mi||0)*3,P.x-22-(e.mi||0)*9);
+  if(!threat&&e.x<tx-3){e.x+=Math.min(e.spd*1.6,(tx-e.x)*2)*dt;e.state='walk';e.face=1}else if(!threat&&e.x>tx+20){e.x-=e.spd*dt;e.state='walk';e.face=-1}else{e.state='idle';if(threat&&Math.random()<dt*.4)bubble(e,pick(['ما انقلاب نکردیم که به عقب برگردیم!','آزادی نه شرقیه نه غربی، جهانیه!','زنجیر رو نگه دارید!']),2)}
+}
+
 // ================= torch & legacy =================
 const TORCH_ON=()=>state==='play'&&!TUT;
 const SUCC_NAMES=['سارا','کیوان','نگار','امید','پریا','بهروز','نازنین','پیمان','الهام','سیاوش','ترانه','بابک'];
@@ -664,6 +850,7 @@ function adminSkip(){
   if(state!=='play')return;
   if(TUT){endTutorial();return}
   if(PRO){if(CINE)return;CUT=null;PRO.doom=true;P.hp=1;P.inv=0;hurtPlayer(50,1,false,true);return}
+  if(ILD){CUT=null;enemies=[];spawnQ=[];projs=[];clearT=0;ildFinish();return}
   CUT=null;enemies=[];spawnQ=[];projs=[];clearT=0;
   if(defending>=0){segComplete();return}
   fade(()=>levelComplete());
@@ -671,14 +858,15 @@ function adminSkip(){
 const PRO_STORY={ch:'پیش‌درآمد — کوی دانشگاه',
   story:'تهران، شب ۱۷ تیر ۱۳۷۸. روزنامه‌ی «سلام» توقیف شده و دانشجوها تو کوی دانشگاه جمع شدن. عزت، یه سرباز وظیفه‌ی جوون که تازه از دانشکده‌ی حقوق فارغ‌التحصیل شده، اومده به دوستش سر بزنه. بچه‌ها ازش می‌خوان براشون شعر بخونه. یکی یه مشعل روشن می‌ده دستش. نیمه‌شب صدای موتورها میاد...',
   sparkT:'۱۶ تا ۱۸ تیر ۱۳۷۸ — حمله به کوی دانشگاه',
-  spark:'۱۶ تیر ۱۳۷۸ روزنامه‌ی اصلاح‌طلب «سلام» توقیف شد. دانشجوهای کوی دانشگاه تهران اعتراض آرومی کردن. نیمه‌شب، نیروی انتظامی و لباس‌شخصی‌های انصار حزب‌الله به خوابگاه حمله کردن، اتاق‌ها رو به هم ریختن و دانشجوها رو زدن.',
+  spark:'۱۶ تیر ۱۳۷۸ روزنامه‌ی اصلاح‌طلب «سلام» توقیف شد. دانشجوهای کوی دانشگاه تهران اعتراض آرومی کردن. نیمه‌شب، نیروی انتظامی و لباس‌شخصی‌های انصار حزب‌الله به خوابگاه حمله کردن، اتاق‌ها رو به هم ریختن و دانشجوها رو زدن. چند ماه قبل، آذر ۱۳۷۷، داریوش فروهر و پروانه اسکندری و بعد نویسنده‌ها محمد مختاری و محمدجعفر پوینده کشته شده بودن («قتل‌های زنجیره‌ای»).',
   name:'پیش‌درآمد — تهران، کوی دانشگاه',
   desc:'تو نقش عزت ابراهیم‌نژادی. مشعل رو روشن نگه دار و از دانشجوها دفاع کن. بعضی شب‌ها رو نمی‌شه برد.',
   note:'عزت ابراهیم‌نژاد یه آدم واقعی بود. این مرحله ادای احترام به اوست.'};
 const PRO_SEG={theme:'dorm',len:1300,waves:[
   {at:240,list:['basij','basij','ext']},{at:620,list:['basij','shield','basij','ext']},
-  {at:980,list:['basij','basij','sepah','ext','basij','shield'],doom:true}],objs:[]};
+  {at:980,list:['basij','basij','sepah','ext','basij','shield'],doom:true}],objs:[{type:'news',x:160}]};
 function startPrologue(){
+  if(nextInterlude('pro'))return;
   PRO={doom:false};LV=0;segI=0;defending=-1;abil={drone:0,trump:0,doc:0};
   showPanel('storyPanel');storyPage=0;UNLOCK='';renderStory();state='story';
 }
@@ -704,6 +892,9 @@ function showMem(kind){
      text:(CH&&CH.fallen?'تو این جاده، '+fa(CH.fallen)+' نفر کنار کیان افتادن. ':'')+'کیان یه شخصیت خیالیه، ولی آدم‌هایی مثل اون واقعی بودن. تو آبان ۱۳۹۸، تو کمتر از یه هفته، عفو بین‌الملل کشته شدن دست‌کم ۳۰۴ نفر رو ثبت کرد. خیلی‌هاشون تو خیابون‌ها کشته شدن، وقتی اینترنت قطع بود و هیچ تصویری بیرون نمی‌رفت. هیچ‌وقت آمار رسمی‌ای اعلام نشد.',
      legacy:'یه پسر روستایی از لرستان مشعلش رو از کنار جاده برداشت.',src:'منبع: عفو بین‌الملل',btn:'مشعل رو بردار ←',next:()=>{CINE=null;levelComplete()}},
   }[kind];
+  showMemObj(M)}
+function showMemObj(M){
+  state='mem';
   document.getElementById('memName').textContent=M.name;document.getElementById('memDate').textContent=M.date;
   document.getElementById('memText').textContent=M.text;document.getElementById('memLegacy').textContent=M.legacy;document.getElementById('memSrc').textContent=M.src;
   const b=document.getElementById('memBtn');b.disabled=true;b.textContent='...';b.onclick=()=>{hidePanels();M.next()};
@@ -812,6 +1003,7 @@ function pickupWeapon(it){
   addFloat(P.x,P.y-42,it.kind==='baton'?'باتوم!':'سپر!','#9cf');
 }
 function interact(){
+  if(interactGoal())return;
   for(const it of items){if((it.kind==='baton'||it.kind==='shield')&&Math.abs(it.x-P.x)<16&&Math.abs(it.y-P.y)<12){pickupWeapon(it);return}}
   for(const o of objs){
     const dx=Math.abs(o.x-P.x);
@@ -832,6 +1024,7 @@ function interact(){
 
 // ================= enemies =================
 function hurtEnemy(e,dmg,dir,knock,src){
+  if(e.marcher){if(e.injured)return false;e.hp-=dmg*.55;e.flash=.12;sparks(e.x,e.y-20);if(!(e.bubT>0))bubble(e,pick(['کمک!','زنجیر رو نگه دارید!','نترسید!']),1.2);if(e.hp<=0){e.injured=true;e.state='down';e.st=0;e.z=.1;e.vz=90;e.vx=dir*30;seg.lost=(seg.lost||0)+1;say('یکی از راهپیماها زخمی شد...',1.6)}return true}
   if(e.state==='down'||e.flee)return false;
   if(e.kind==='bike'&&e.state==='ride'){ // knock rider off
     e.kind='basij';e.hp=14;e.maxhp=30;e.spd=42;e.state='down';e.st=0;e.vx=dir*90;e.vz=130;e.z=.1;e.wpn='baton';
@@ -884,6 +1077,7 @@ function updEnemies(dt){
     if(e.z>0||e.vz){e.z+=e.vz*dt;e.vz-=520*dt;e.x+=e.vx*dt;if(e.z<=0){e.z=0;e.vz=0;e.vx=0}}
     if(e.flee){e.x+=130*dt;e.state='walk';if(e.x>cam+W+60)e.dead=true;continue}
     if(e.leave){e.x+=e.leave*60*dt;e.face=e.leave;e.state='walk';if(e.x<cam-40||e.x>cam+W+40)e.dead=true;continue}
+    if(e.marcher){updMarcher(e,dt);continue}
     if(e.ally>0){e.ally-=dt;if(e.ally<=0){e.leave=e.x<cam+W/2?-1:1;
       bubble(e,e.person?pick(['زن، زندگی، آزادی!','پیروز باشی!','ایران آزاد!']):e.rose?pick(['ممنون بابت گل. من دیگه برمی‌گردم خونه.','دیگه دستم رو سمت مردم بلند نمی‌کنم.','خداحافظ. گلت یادم می‌مونه.']):'من به مردم پیوستم!',2.4);
       if(e.wpn==='baton'||e.wpn==='shield'){items.push({kind:e.wpn,x:e.x,y:e.y,z:4,vz:60});e.wpn=null}continue}}
@@ -896,6 +1090,7 @@ function updEnemies(dt){
     let tgt=P,tx,ty;
     if(e.ally>0){let best=null,bd=1e9;for(const o of enemies){if(o===e||o.ally>0||o.flee||o.state==='down'||o.leave||o.kind==='bike')continue;const d=Math.abs(o.x-e.x)+Math.abs(o.y-e.y);if(d<bd){bd=d;best=o}}
       if(!best){if(spawnQ.length&&(e.rose||e.person)){e.state='idle';continue}e.ally=0.001;continue}tgt=best}
+    if(!(e.ally>0)&&seg.goal==='escort'){let m=null,bd=1e9;for(const o of enemies){if(!o.marcher||o.injured)continue;const d=Math.abs(o.x-e.x)+Math.abs(o.y-e.y);if(d<bd){bd=d;m=o}}if(m&&bd<Math.abs(P.x-e.x)+Math.abs(P.y-e.y)+30)tgt=m}
     if(e.state==='attack'){
       if(e.st>=e.wind&&!e.hitDone){e.hitDone=true;
         const dx=(tgt.x-e.x)*e.face;
@@ -911,13 +1106,13 @@ function updEnemies(dt){
       e.aim=(e.aim||0)+dt;
       if(e.aim>1.7){e.aim=0;projs.push({x:e.x+e.face*14,y:e.y,z:22,vx:e.face*340,vy:(P.y-e.y)*2,kind:'bullet',dmg:40,pierce:true,t:0,owner:e});sfx('shoot');shakeT=.12}
       continue}
-    if(e.kind==='saw'&&!(e.ally>0)){
-      let tr=null,bd=1e9;for(const o of objs){if(o.type!=='walnut'||o.hp<=0||o.x<cam-10||o.x>cam+W+10)continue;const d=Math.abs(o.x-e.x);if(d<bd){bd=d;tr=o}}
+    if((e.kind==='saw'||e.kind==='dozer')&&!(e.ally>0)){
+      let tr=null,bd=1e9;for(const o of objs){if((o.type!=='walnut'&&o.type!=='house')||o.hp<=0||o.x<cam-10||o.x>cam+W+10)continue;const d=Math.abs(o.x-e.x);if(d<bd){bd=d;tr=o}}
       if(tr){const tx=tr.x+(e.x<tr.x?-9:9),ty=tr.y+4,dx=tx-e.x,dy=ty-e.y;
-        if(Math.abs(dx)<3&&Math.abs(dy)<3){e.state='saw';e.face=tr.x>e.x?1:-1;tr.hp-=13*dt;tr.shake=.12;
+        if(Math.abs(dx)<3&&Math.abs(dy)<3){e.state='saw';e.face=tr.x>e.x?1:-1;tr.hp-=(e.kind==='dozer'?20:13)*dt;tr.shake=.12;
           if(Math.random()<dt*20)fx.push({x:tr.x-e.face*3,y:tr.y-8,vx:rnd(-40,40),vy:rnd(-60,-10),t:0,life:.4,col:pick(['#c8a060','#8a6a3a']),s:2});
           if(Math.random()<dt*5)sfx('saw');
-          if(tr.hp<=0){tr.hp=0;tr.fallDir=e.face;sfx('boom');say('یه درخت گردو رو بریدن! 😢',2);shakeT=.2}}
+          if(tr.hp<=0){tr.hp=0;tr.fallDir=e.face;sfx('boom');say(tr.type==='house'?'یه خونه رو خراب کردن...':'یه درخت گردو رو بریدن! 😢',2);shakeT=.2}}
         else{const sp=e.spd*dt;e.x+=Math.sign(dx)*Math.min(Math.abs(dx),sp);e.y+=Math.sign(dy)*Math.min(Math.abs(dy),sp*.7);e.state='walk';e.face=dx>0?1:-1}
         continue}
     }
@@ -1030,7 +1225,7 @@ const UNL_WHY={
  farah:'فرح (۴): شفا برای زخمی‌ها.',
  cyrus:'کوروش (۶): نماد ایران باستان که معترض‌ها بهش افتخار می‌کنن.',
  drone:'پهپاد اسرائیلی (۱): خرداد ۱۴۰۴، جنگ ۱۲ روزه.'};
-function can(k){if(TUT)return true;if(PRO)return false;return LV>=UNL[k]}
+function can(k){if(TUT)return true;if(ILD)return k==='rose';if(PRO)return false;return LV>=UNL[k]}
 function locked(k){say('این قدرت هنوز آزاد نشده. بعداً تو داستان بهش می‌رسی.',1.8);sfx('bad')}
 function usePowers(){
   if(DARK){if(hit('KeyQ','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7'))say('بدون شعله کسی صدات رو نمی‌شنوه...',1.8);return}
@@ -1102,7 +1297,7 @@ function updWaves(dt){
     if(nw&&P.x>=nw.at){nw.started=true;camLock=Math.min(cam,seg.len-W);nw.list.forEach((k,i)=>spawnQ.push({kind:k,t:.3+i*.7}));
       if(nw.doom&&PRO){PRO.doom=true;say('تعدادشون خیلی زیاده...',3);nw.spawnT=1.5;nw.gunT=2.5}
       if(nw.hold){nw.holdT=DEV?8:nw.hold;nw.spawnT=1.2;say(nw.holdMsg||'مشعل‌ها رو روشن نگه دار!',3.5);
-        if(seg.theme==='alley'||seg.theme==='square'){for(let k=0;k<4;k++){const e=spawnPerson(seg.theme==='alley'?pick(['green','nasrin','green']):pick(['green','student']),k%2?cam-14-k*10:cam+W+14+k*10,rnd(150,200),nw.holdT+6,false);e.wpn='candle';if(k<2)bubble(e,pick(['یا حسین، میرحسین!','ما همه با هم هستیم','شمع‌ها رو روشن نگه دارید']),2.5)}}}
+        if(seg.theme==='alley'||seg.theme==='square'||seg.theme==='campus'){for(let k=0;k<4;k++){const e=spawnPerson(seg.theme==='alley'?pick(['green','nasrin','green']):seg.theme==='campus'?pick(['student','sepehr','woman2']):pick(['green','student']),k%2?cam-14-k*10:cam+W+14+k*10,rnd(150,200),nw.holdT+6,false);e.wpn='candle';if(k<2)bubble(e,pick(['یا حسین، میرحسین!','ما همه با هم هستیم','شمع‌ها رو روشن نگه دارید']),2.5)}}}
       if(!TUT&&STORE_THEMES.includes(seg.theme)&&Math.random()<.8){const n=Math.min(3,1+Math.floor(LV/2));for(let k=0;k<n;k++)spawnQ.push({kind:'store',t:1.6+k*1.3})}}}
   for(const s of spawnQ){s.t-=dt;if(s.t<=0){s.done=true;spawnEnemy(s.kind)}}
   spawnQ=spawnQ.filter(s=>!s.done);
@@ -1113,11 +1308,13 @@ function updWaves(dt){
       if(w.holdT<=0){spawnQ=[];for(const e of enemies)if(!(e.ally>0)&&!e.boss){e.leave=e.x<P.x?-1:1;e.state='walk'}say(w.endMsg||'تونستی! مشعل روشن موند.',3);rage=Math.min(100,rage+25)}
       return}
   }
-  if(w&&!spawnQ.length&&!enemies.length){w.done=true;camLock=null;
+  if(w&&!spawnQ.length&&!enemies.some(e=>!e.marcher)){w.done=true;camLock=null;
     if(w.final){if(seg.goal==='gate'){gateReady=true;goT=3;say('شب‌زنده‌داری تموم شد. حالا برو ته کوچه و در خونه رو بزن (E)',4)}else{clearT=2.5;say('آفرین!',2)}}else{goT=2.5}}
   if(clearT>0){clearT-=dt;if(clearT<=0)segComplete()}
 }
 function segComplete(){
+  if(seg&&seg.card&&!seg.cardShown){seg.cardShown=true;showMemObj(Object.assign({},seg.card,{next:()=>{state='play';segComplete()}}));return}
+  if(ILD){if(ILD.segI<ILD.segs.length-1){ILD.segI++;fade(()=>startIldSeg());return}ildFinish();return}
   if(defending>=0){city[defending].free=true;P.coins+=10;const n=CITIES[defending].name;defending=-1;fade(()=>{openMap('حمله به '+n+' دفع شد! +۱۰ سکه')});return}
   const L=LEVELS[LV];
   if(L.segs&&segI<L.segs.length-1){segI++;fade(()=>initSeg(L.segs[segI]));return}
@@ -1369,7 +1566,7 @@ function update(dt){
   usePowers();updTutorial(dt);
   if(rage>=100&&!wasFull&&can('crowd')){sfx('power');say('🦁 شجاعتت پر شد! Q بزن تا مردم بیان',2.5)}wasFull=rage>=100;
   if(freezeT<=0||true)updEnemies(dt);
-  updProjs(dt);updItems(dt);updHelpers(dt);updWaves(dt);
+  updProjs(dt);updItems(dt);updHelpers(dt);updWaves(dt);updGoals(dt);
   // swamp (Ahmadinejad)
   const swampBoss=enemies.some(e=>e.boss&&e.boss.swamp&&!e.flee);
   swampV=clamp(swampV+(swampBoss?dt*.5:-dt*.3),0,1);
@@ -1397,6 +1594,7 @@ function drawBG(theme){
   if(bunker){drawBunker();return}
   if(theme==='alley'){drawAlley();return}
   if(theme==='dorm'){drawDorm();return}
+  if(THEMES[theme]){THEMES[theme]();return}
   if(theme==='village'){drawVillage();return}
   if(theme==='bazaar'){drawBazaar();return}
   if(palace){drawPalace();return}
@@ -1461,6 +1659,41 @@ function drawMilad(x,night){
 function drawClockTower(x,y){R(x-8,y-60,16,62,'#a08a70');R(x-10,y-64,20,6,'#8a7460');R(x-5,y-56,10,10,'#f0e8d0');R(x-1,y-55,2,5,'#222');R(x,y-51,4,1,'#222');R(x-6,y-72,12,8,'#8a7460');R(x-2,y-78,4,6,'#7a6450')}
 function shopOpen(i,x,fy){const so=fx.find(f=>f.shop&&f.wx===i*64);if(!so)return;const k=Math.min(1,so.t/.6);
   R(x+4,fy+36,56,Math.round(34*k),'#2a1a0e');R(x+8,fy+40,48,Math.round(28*k),'#c8862a');for(let q=0;q<4;q++)R(x+10+q*12,fy+42,8,Math.round(6*k),'#e8b85a');R(x+4,fy+36+Math.round(34*k)-2,56,2,'#888')}
+function skyG(a,b){const s2=g.createLinearGradient(0,0,0,130);s2.addColorStop(0,a);s2.addColorStop(1,b);g.fillStyle=s2;g.fillRect(0,0,W,141)}
+function hills(col,base,amp,par,f){g.fillStyle=col;g.beginPath();g.moveTo(0,141);for(let x=0;x<=W;x+=6){const wx=x+cam*par;g.lineTo(x,base+Math.sin(wx*f)*amp+Math.sin(wx*f*2.7)*amp*.4)}g.lineTo(W,141);g.fill()}
+function ground(c1,c2){R(0,128,W,13,c2);R(0,141,W,75,c1);for(let x=-(cam%32);x<W;x+=32)R(Math.round(x),141,1,75,shade(c1,-12))}
+function drawDozer(x,y,face,flash){g.save();g.translate(Math.round(x),Math.round(y));g.scale(face,1);if(flash)g.globalAlpha=.6;
+  R(-22,-6,44,6,'#222');for(let k=0;k<6;k++)R(-20+k*7+(Math.floor(T*10)%2),-5,3,4,'#555');R(-20,-18,36,12,'#e8b020');R(-20,-18,36,2,'#f8d040');
+  R(-14,-30,14,12,'#c89010');R(-12,-28,10,7,'#9cc7dd');R(16,-16,4,4,'#888');R(20,-22,4,20,'#999');R(23,-22,2,20,'#777');R(-24,-14,4,3,'#333');
+  if(Math.floor(T*6)%2)fx.push({x:x+cam-face*22,y:y-26,vx:-face*10,vy:-30,t:0,life:.6,col:'#555',s:2});g.restore();g.globalAlpha=1}
+const THEMES={
+ t57(){skyG('#8a96a8','#c8ccd0');hills('#7a8494',70,8,.08,.03);
+  for(let i=Math.floor(cam*.5/46)-1;i<Math.floor((cam*.5+W)/46)+2;i++){const x=Math.round(i*46-cam*.5),h=40+hash(i)*30;R(x,128-h,40,h,'#8a7a6a');for(let wy=134-h;wy<120;wy+=9)for(let wx=x+4;wx<x+36;wx+=9)R(wx,wy,5,6,'#4a5060')}
+  for(let i=Math.floor(cam/180);i<Math.floor((cam+W)/180)+2;i++){const x=Math.round(i*180-cam+40);R(x,92,70,10,'#e8e0d0');txt(['ما انقلاب نکردیم که به عقب برگردیم','آزادی نه شرقیه نه غربی، جهانیه','حجاب اختیاری'][((i%3)+3)%3],x+35,97,4.5,'#8a1a1a','center',null)}
+  const px=Math.round(seg.len-200-cam);if(px<W+10){R(px,40,180,90,'#c8b89a');for(let k=0;k<8;k++)R(px+10+k*22,58,8,72,'#e0d4b8');R(px,34,180,8,'#a8987a');txt('کاخ دادگستری',px+90,48,7,'#3a2a1a','center',null)}
+  ground('#6a6a70','#9a9a9a')},
+ khavaran(){skyG('#5a4a6a','#c89a7a');hills('#6a5a5a',90,6,.1,.02);for(let i=0;i<6;i++){const x=Math.round(((i*170-cam*.3)%(W+60)+W+60)%(W+60))-30;R(x,96,2,32,'#3a2a2a');R(x-6,100,6,1,'#3a2a2a');R(x+2,104,7,1,'#3a2a2a')}
+  ground('#8a6a4a','#7a5a3a');for(let i=0;i<40;i++){const x=Math.round(((hash(i)*W*3-cam)%W+W)%W),y=148+hash(i+5)*60;R(x,y,4,2,'#7a5a3a')}},
+ shanty(){skyG('#9ac0e0','#e8dcc0');hills('#a8906a',80,12,.1,.025);
+  for(let i=Math.floor(cam*.5/50)-1;i<Math.floor((cam*.5+W)/50)+2;i++){const x=Math.round(i*50-cam*.5);R(x,100,34,26,'#b8946a');R(x-2,98,38,3,'#7a6a5a');R(x+12,108,8,18,'#4a3a2a')}
+  ground('#a88a5a','#9a7a4a')},
+ marsh(){skyG('#e8a0a0','#f8d8b0');R(0,100,W,41,'#6a8a9a');for(let i=0;i<70;i++){const x=Math.round(((i*13-cam*.6)%(W+20)+W+20)%(W+20))-10;R(x,96-(i%4)*4,1,40,'#5a6a3a');R(x+1,94-(i%4)*4,2,3,'#8a7a4a')}
+  ground('#5a6a4a','#4a5a3a');R(0,198,W,18,'#5a7a8a');for(let x=-(cam%20);x<W;x+=20)R(Math.round(x),200,8,1,'#9ab8c8')},
+ campus(){skyG('#0b1030','#2a2550');for(let i=Math.floor(cam*.6/200)-1;i<Math.floor((cam*.6+W)/200)+2;i++){const x=Math.round(i*200-cam*.6);R(x,40,180,88,'#5a5a6a');for(let k=0;k<9;k++)R(x+8+k*19,60,8,60,'#7a7a8a');R(x,34,180,8,'#4a4a5a')}
+  const sx=Math.round(80-cam);if(sx>-100)txt('دانشگاه امیرکبیر',sx+40,30,6,'#fff','center',null);ground('#3a3a42','#4a4a52')},
+ khz(){skyG('#f0a040','#f8e0a0');g.fillStyle='#fff0c0';g.beginPath();g.arc(300,36,18,0,7);g.fill();hills('#c89a5a',100,5,.1,.02);
+  for(let i=Math.floor(cam*.4/90)-1;i<Math.floor((cam*.4+W)/90)+2;i++){const x=Math.round(i*90-cam*.4);R(x,80,3,48,'#6a4a2a');for(let k=0;k<5;k++)R(x-12+k*5,74+(k%2)*3,8,3,'#4a7a2a')}
+  ground('#c8a870','#b89860');if(Math.floor(T*2)%2)for(let i=0;i<5;i++)R(Math.round(((i*90+T*20)%W)),110+i*3,20,1,'rgba(255,255,255,.25)')},
+ saqqez(){skyG('#9ab8d8','#e0e8f0');hills('#6a9a5a',70,14,.08,.02);hills('#5a8a4a',100,8,.2,.03);
+  for(let i=0;i<14;i++){const x=Math.round(((i*60-cam*.6)%(W+40)+W+40)%(W+40))-20;R(x,110,4,10,'#c8c8c8')}ground('#6a8a4a','#5a7a3a');
+  for(let i=0;i<8;i++){const x=Math.round(((T*60+i*53)%(W+40))-20),y=60+Math.sin(T*2+i)*20+i*6;R(x,y,6,2,'rgba(255,255,255,.6)')}},
+ zahedan(){skyG('#c8d8e8','#f0e0c0');const mx=Math.round(500-cam*.3);R(mx-90,50,180,78,'#e0d0b0');for(let k=0;k<7;k++){g.fillStyle='#c8b490';g.beginPath();g.arc(mx-75+k*25,88,9,Math.PI,0);g.fill();R(mx-84+k*25,88,18,40,'#c8b490')}
+  g.fillStyle='#4a8a9a';g.beginPath();g.arc(mx,50,24,Math.PI,0);g.fill();R(mx-110,20,8,108,'#d8c8a0');R(mx+102,20,8,108,'#d8c8a0');ground('#d8c8a8','#c8b898')},
+ sharif(){skyG('#060814','#141a30');const sx=Math.round(60-cam*.6);R(sx,40,240,88,'#3a3a48');for(let r=0;r<3;r++)for(let k=0;k<11;k++)R(sx+8+k*21,50+r*24,10,12,hash(k+r*11)>.6?'#ffcc55':'#1a1a28');
+  txt('دانشگاه صنعتی شریف',sx+120,34,6,'#ddd','center',null);ground('#2a2a30','#3a3a40');for(let x=-(cam%60);x<W;x+=60){R(Math.round(x),150,1,60,'#d8d8a0');R(Math.round(x)+30,140,2,40,'#555');R(Math.round(x)+26,138,10,3,'#555');g.fillStyle='rgba(255,240,180,.08)';g.beginPath();g.moveTo(Math.round(x)+31,141);g.lineTo(Math.round(x)+10,200);g.lineTo(Math.round(x)+52,200);g.fill()}},
+ blackout(){R(0,0,W,141,'#05060c');for(let i=Math.floor(cam/64)-1;i<Math.floor((cam+W)/64)+2;i++){const x=Math.round(i*64-cam);R(x,30,60,98,'#11131c');for(let r=0;r<4;r++)for(let k=0;k<4;k++)R(x+6+k*14,40+r*20,8,10,'#0a0b12')}
+  ground('#101218','#181a22')},
+};
 function drawDorm(){
   R(0,0,W,141,'#0a0c1a');for(let i=0;i<30;i++)R(Math.round(((hash(i)*W*2-cam*.05)%W+W)%W),Math.floor(hash(i+9)*40),1,1,'#888');
   for(let i=Math.floor(cam*.6/110)-1;i<Math.floor((cam*.6+W)/110)+2;i++){const x=Math.round(i*110-cam*.6);
@@ -1561,6 +1794,24 @@ function drawObj(o){
   else if(o.type==='door'){const up=o.open?Math.min(120,(o.openT=(o.openT||0)+1/60)*120):0;
     R(x-10,0,20,141,'#3a3d42');R(x-8,4-up,16,206,'#7a6a3a');for(let y=8-up;y<210-up;y+=12)R(x-8,y,16,6,'#e8c020');R(x-12,0,24,4,'#222');
     R(x-3,60-up,6,6,P.hasKey?'#3c3':'#c22')}
+  else if(o.type==='news'){R(x-14,96,28,32,'#5a3a2a');R(x-12,98,24,20,'#e8e0d0');txt('سلام',x,104,6,'#1a1a1a','center',null);R(x-11,110,22,6,'#c22');txt('توقیف',x,113,4.5,'#fff','center',null)}
+  else if(o.type==='spot'){if(o.grave){R(x-3,o.y-12,6,12,'#c8c8c8');R(x-5,o.y-1,10,2,'#9a9a9a')}else R(x-8,o.y-2,16,4,'#6a4a2a');
+    if(o.done){if(seg.fx==='candle'||o.cand){R(x-1,o.y-7,2,5,'#f0e8d0');R(x-1,o.y-9+(Math.floor(T*8)%2),2,2,'#ffb030');g.fillStyle='rgba(255,180,80,.18)';g.beginPath();g.arc(x,o.y-7,7,0,7);g.fill()}
+      else if(seg.fx==='scarf'){R(x-6,o.y-4,12,2,'#f0f0f0');R(x+3,o.y-6,4,2,'#f0f0f0')}else{for(let k=0;k<3;k++){R(x-4+k*4,o.y-8,1,6,'#3a7a2a');R(x-5+k*4,o.y-10,3,3,['#e8325a','#ffd84a','#f0f0f0'][k])}}}
+    else if(Math.abs(P.x-o.x)<16&&Math.abs(P.y-o.y)<14)prompt(x,o.y-22,'E')}
+  else if(o.type==='gateK'){R(x-20,70,40,58,'#3a3a3a');for(let k=0;k<6;k++)R(x-18+k*7,72,2,56,'#5a5a5a');R(x-4,96,8,6,'#8a7a2a');if(Math.abs(P.x-o.x)<60)speech(x,58,'در قفله. از کنار دیوار برو تو.')}
+  else if(o.type==='house'){if(o.hp>0){R(x-18,o.y-30,36,30,'#b8946a');R(x-20,o.y-32,40,3,'#7a6a5a');R(x-4,o.y-18,8,18,'#4a3a2a');R(x+8,o.y-24,6,6,'#3a3a5a');if(o.hp<100){R(x-10,o.y-40,20,3,'#000');R(x-9,o.y-39,Math.round(18*o.hp/100),1,'#6c3')}}
+    else{for(let k=0;k<6;k++)R(x-16+k*6,o.y-4-(k%3)*3,6,4+(k%3)*3,'#9a7a5a')}}
+  else if(o.type==='door2'){const dy=100;if(o.kind==='shutter'){R(x-22,dy-8,44,36,'#3a2a1a');if(o.done){R(x-20,dy-6,40,34,'#7a7a80');for(let k=0;k<10;k++)R(x-20,dy-4+k*3,40,1,'#8a8a90');R(x-12,dy+6,24,9,'#f4f4f4');txt('اعتصاب',x,dy+10.5,4.5,'#c22','center',null)}else{R(x-20,dy-6,40,34,'#c8862a');R(x-16,dy-2,32,8,'#e8b85a')}}
+    else{R(x-9,dy,18,28,'#5a3a2a');R(x-7,dy+2,14,24,o.done?'#7a5a3a':'#6a4a2a');R(x+4,dy+14,2,2,'#c9a43a');if(o.done){R(x-6,dy-8,12,6,'#f0f0f0');txt('✓',x,dy-5,5,'#2a8a3a','center',null)}}
+    if(!o.done&&Math.abs(P.x-o.x)<16&&P.y<160)prompt(x,dy-16,'E');if(o.sayT>0){o.sayT-=1/60;speech(x,dy-20,o.line)}}
+  else if(o.type==='source'){if(o.kind==='water'){R(x-10,o.y-10,20,10,'#8a8a8a');R(x-8,o.y-8,16,4,'#3a6a9a');R(x-12,o.y-24,2,14,'#6a4a2a');R(x+10,o.y-24,2,14,'#6a4a2a');R(x-12,o.y-26,24,2,'#6a4a2a')}
+    else{drawHuman(x,o.y,LOOK.bazaari,'idle',T,1);R(x+6,o.y-22,6,4,'#f0f0f0')}
+    if(Math.abs(P.x-o.x)<16&&!P.carry)prompt(x,o.y-40,'E')}
+  else if(o.type==='drop'){const dy=100;R(x-10,dy-4,20,32,o.done?'#7a5a3a':'#4a3a2a');R(x-8,dy-2,16,28,'#5a3a2a');R(x-14,dy-8,28,4,'#3a2a1a');if(o.done)R(x-3,dy-14,6,6,seg.carryLabel==='آب'?'#4a7ab0':'#f0f0f0');
+    if(!o.done&&Math.abs(P.x-o.x)<18&&P.y<162)prompt(x,dy-20,'E');if(o.sayT>0){o.sayT-=1/60;speech(x,dy-24,seg.carryLabel==='آب'?'خدا خیرت بده...':'خبر رسید. ممنون.')}}
+  else if(o.type==='shoes'){for(let k=0;k<18;k++){const sx=x-60+(k%9)*14,sy=150+Math.floor(k/9)*22+(k%2)*3;R(sx,sy,5,2,'#2a2a2a');R(sx+6,sy+1,5,2,'#2a2a2a')}}
+  else if(o.type==='namewall'){R(x-30,40,80,88,'#2a2a30');for(let r=0;r<16;r++)for(let k=0;k<14;k++)if(hash(r*31+k)>.3)R(x-26+k*5,46+r*5,3,1,'#9a9a9a');if(Math.abs(P.x-o.x)<120)txt('۳٬۱۱۷ تا ۷٬۰۰۷',x+10,34,6,'#ddd','center')}
   else if(o.type==='torchDrop'){R(x-6,o.y-3,12,2,'#6a4a2a');const f=3+Math.round(Math.sin(T*20));R(x+5,o.y-3-f,4,f,'#ff7a1a');R(x+6,o.y-4-f,2,f-1,'#ffe08a');g.fillStyle='rgba(255,170,60,.18)';g.beginPath();g.arc(x+7,o.y-4,14,0,7);g.fill()}
   else if(o.type==='candles'){for(let k=0;k<9;k++){const cx=x-40+k*10,cy=146+(k%3)*4;R(cx,cy-5,2,5,'#f0e8d0');R(cx,cy-7+(Math.floor(T*8+k)%2),2,2,'#ffb030')}}
   else if(o.type==='walnut'){
@@ -1635,6 +1886,7 @@ function drawPlayer(){
   if(P.inv>0&&P.state!=='down'&&Math.floor(T*16)%2)return;
   let pose=P.state;if(P.atk)pose=P.atk.pose;else if(P.z>0)pose='jump';
   const lk=P.look||LOOK.hero;
+  if(P.carry){const cx=Math.round(x),cy=Math.round(P.y-P.z)-44;if(seg.carryLabel==='آب'){R(cx-3,cy,7,8,'#4a7ab0');R(cx-1,cy-2,3,2,'#333')}else{R(cx-4,cy+1,9,6,'#f0f0f0');R(cx-4,cy+1,9,1,'#c22')}}
   if(TORCH_ON()&&!CINE&&P.state!=='down')drawTorch(x,P.y-P.z,P.face,P.torch);
   drawHuman(x,P.y-P.z,lk,pose,T,P.face,P.weapon);
   if(dmgMulT>0&&Math.floor(T*8)%2){R(Math.round(x)-1,Math.round(P.y-P.z)-46,3,3,'#ffd84a')}
@@ -1644,8 +1896,10 @@ function drawEnemy(e){
   if(e.state==='down'&&e.dying&&e.st>.6&&Math.floor(T*16)%2)return;
   if(e.kind==='gunman'&&e.aim>.9&&!CINE&&Math.floor(T*12)%2){g.strokeStyle='rgba(255,40,40,.7)';g.lineWidth=.6;g.beginPath();g.moveTo(Math.round(x)+e.face*14,e.y-22);g.lineTo(P.x-cam,P.y-22);g.stroke()}
   if(e.kind==='bike'&&e.state==='ride'){drawBike(x,e.y,e.face,e.look);return}
+  if(e.kind==='dozer'&&!(e.state==='down'&&e.dying)){drawDozer(x,e.y-e.z,e.face,e.flash>0);return}
   let pose=e.state==='attack'?(e.st<e.wind?'idle':(e.wpn==='baton'?'swing':'punch')):e.state==='special'?(e.sp.type==='charge'?(e.st>.55?'walk':'hurt'):'throw'):e.state;
   if(e.leave)pose='cheer';
+  if(e.injured)pose='dead';
   g.save();
   if(e.state==='attack'&&e.st<e.wind&&!e.boss){g.translate(Math.round(Math.sin(e.st*60)),0)}
   let lk=e.look;if(e.noTurban){lk=e.lookNT||(e.lookNT=Object.assign({},e.look,{turban:null,hair:'#8a8a8a'}))}
@@ -1771,7 +2025,8 @@ function drawHUD(){
   txt('🔥×'+fa(P.lives)+'   سکه '+fa(P.coins)+(chase||!can('rose')?'':'   🌹×'+fa(P.roses)+' (R)')+(badges?'   نشان '+fa(badges):''),7,22,6,'#ffd84a','left');
   if(!chase&&P.weapon)txt((P.weapon==='baton'?'باتوم ':'سپر ')+'■'.repeat(Math.ceil(P.wdur/2)),7,32,5.5,'#9cf','left');
   if(TORCH_ON()){R(6,40,60,5,'#000');R(7,41,Math.round(58*clamp(P.torch,0,100)/100),3,P.torch<25?(Math.floor(T*6)%2?'#6a8aff':'#ff7a1a'):'#ff9a30');drawTorch(74,52,1,Math.max(P.torch,1),.6);txt((P.name||'')+' · مشعل',84,43,5,'#ffcf80','left')}
-  {const hw=activeWave&&state==='play'&&waves.find(w=>w.started&&!w.done&&w.hold&&w.holdT>0);if(hw){R(W/2-44,40,88,13,'rgba(0,0,0,.6)');txt('🕯 شمع‌روشن: '+fa(Math.ceil(hw.holdT)),W/2,47,7,'#ffd84a')}}
+  {const gt=goalText();if(gt&&state==='play'){g.font=F(6.5);const w2=g.measureText(gt).width+12;R(W/2-w2/2,54,w2,12,'rgba(0,0,0,.6)');txt(gt,W/2,60.5,6.5,'#ffcf80')}}
+  {const hw=activeWave&&state==='play'&&waves.find(w=>w.started&&!w.done&&w.hold&&w.holdT>0);if(hw){R(W/2-44,40,88,13,'rgba(0,0,0,.6)');txt(hw.candles?'🕯 '+fa(Math.min(hw.candles,Math.floor(hw.candles*(1-hw.holdT/hw.hold))))+' / '+fa(hw.candles)+'  ·  '+fa(Math.ceil(hw.holdT)):'🕯 شمع‌روشن: '+fa(Math.ceil(hw.holdT)),W/2,47,7,'#ffd84a')}}
   if(SUCC){const a=Math.min(1,SUCC.t*2,((SUCC.dur||3.5)-SUCC.t)*2);g.globalAlpha=clamp(a,0,1);R(0,H/2-14,W,26,'rgba(0,0,0,.75)');txt(SUCC.text,W/2,H/2-1,6.5,'#ffcf80','center',null);g.globalAlpha=1}
   if(dmgMulT>0)txt('قدرت ×۲  '+fa(Math.ceil(dmgMulT)),7,chase?32:42,6,'#ff8a4a','left');
   // rage
@@ -1806,6 +2061,7 @@ function draw(){
     if(state==='chase'&&CH)drawChase();else if(seg)drawWorld();
     g.filter='none';
     g.restore();
+    if(seg&&seg.theme==='blackout'&&state==='play'&&!DARK){const px=P.x-cam,py=P.y-20,gr=g.createRadialGradient(px,py,8,px,py,130);gr.addColorStop(0,'rgba(0,0,10,.1)');gr.addColorStop(1,'rgba(0,0,10,.75)');g.fillStyle=gr;g.fillRect(0,0,W,H)}
     if(DARK&&state==='play'){const px=P.x-cam,py=P.y-20,gr=g.createRadialGradient(px,py,10,px,py,170);gr.addColorStop(0,'rgba(0,0,10,.25)');gr.addColorStop(1,'rgba(0,0,10,'+(.7+.08*Math.sin(T*4))+')');g.fillStyle=gr;g.fillRect(0,0,W,H);
       txt('🌑 '+fa(Math.max(0,Math.ceil(15-DARK.t))),W/2,72,13,DARK.t>10?'#ff5a5a':'#ffcf80');
       txt('کنار مردم وایستا ('+fa(Math.min(2,DARK.near).toFixed(1))+'/۲) یا بجنگ ('+fa(DARK.kills)+'/۳)',W/2,88,6.5,'#ddd')}
@@ -1828,11 +2084,11 @@ function draw(){
 // ================= panels =================
 function showPanel(id){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id===id))}
 function hidePanels(){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'))}
-function resetGame(){audioInit();PRO=null;CINE=null;SUCC=null;P.look=null;P.lives=3;P.coins=0;rage=0;badges=0;city=CITIES.map(()=>({free:false,wall:0}));upg={armor:0,engine:0,gun:0,spikes:0};hospital=0;TUT=null}
+function resetGame(){audioInit();ILD=null;ILD_DONE.clear();PRO=null;CINE=null;SUCC=null;P.look=null;P.lives=3;P.coins=0;rage=0;badges=0;city=CITIES.map(()=>({free:false,wall:0}));upg={armor:0,engine:0,gun:0,spikes:0};hospital=0;TUT=null}
 document.getElementById('startBtn').onclick=()=>{resetGame();startTutorial()};
 document.getElementById('skipTutBtn').onclick=()=>{resetGame();startPrologue()};
 document.getElementById('storyBtn').onclick=storyNext;
-document.getElementById('retryBtn').onclick=()=>{P.lives=3;document.getElementById('overTitle').textContent='شکست خوردی!';if(PRO){CINE=null;startPrologue();return}if(defending>=0){const d=defending;pendingAttack=d;defending=-1;startDefense()}else startLevel(LV)};
+document.getElementById('retryBtn').onclick=()=>{P.lives=3;document.getElementById('overTitle').textContent='شکست خوردی!';if(ILD){ILD.segI=0;beginInterlude();return}if(PRO){CINE=null;startPrologue();return}if(defending>=0){const d=defending;pendingAttack=d;defending=-1;startDefense()}else startLevel(LV)};
 document.getElementById('demoAgain').onclick=()=>{showPanel('titlePanel');state='title';seg=null};
 if(DEMO){const sb=document.querySelector('#titlePanel .sub');if(sb)sb.insertAdjacentHTML('afterend','<div style="color:#ff9a30;font-size:1.4em">دموی رایگان: پیش‌درآمد + فصل ۱</div>')}
 document.getElementById('againBtn').onclick=()=>{showPanel('titlePanel');state='title';seg=null};
